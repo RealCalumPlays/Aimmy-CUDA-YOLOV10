@@ -329,7 +329,7 @@ namespace Aimmy2
 
                 case "EMA Smoothening":
                     MouseManager.IsEMASmoothingEnabled = Dictionary.toggleState[title];
-                    Debug.WriteLine(MouseManager.IsEMASmoothingEnabled);
+                    //Debug.WriteLine(MouseManager.IsEMASmoothingEnabled);
                     break;
             }
         }
@@ -738,7 +738,7 @@ namespace Aimmy2
                 if (Dictionary.toggleState["EMA Smoothening"])
                 {
                     MouseManager.smoothingFactor = uiManager.S_EMASmoothing.Slider.Value;
-                    Debug.WriteLine(MouseManager.smoothingFactor);
+                    //Debug.WriteLine(MouseManager.smoothingFactor);
                 }
             };
             AddSeparator(FOVConfig);

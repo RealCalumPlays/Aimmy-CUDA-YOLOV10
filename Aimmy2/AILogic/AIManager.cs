@@ -624,7 +624,7 @@ namespace Aimmy2.AILogic
             {
                 if (!_aiLoopThread.Join(TimeSpan.FromSeconds(1)))
                 {
-                    Debug.WriteLine("AIManager: Thread didn't join in 1 second...");
+                    //Debug.WriteLine("AIManager: Thread didn't join in 1 second...");
                     _aiLoopThread.Interrupt(); // Force join the thread (may error..)
                 }
             }
