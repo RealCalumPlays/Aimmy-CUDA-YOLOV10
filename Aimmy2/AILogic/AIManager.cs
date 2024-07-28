@@ -80,7 +80,7 @@ namespace Aimmy2.AILogic
                 ExecutionMode = ExecutionMode.ORT_PARALLEL
             };
 
-            // Attempt to load via DirectML (else fallback to CPU)
+            // Attempt to load via CUDA (else fallback to CPU)
             Task.Run(() => InitializeModel(sessionOptions, modelPath));
         }
 
@@ -90,14 +90,14 @@ namespace Aimmy2.AILogic
         {
             try
             {
-                await LoadModelAsync(sessionOptions, modelPath, useDirectML: true);
+                await LoadModelAsync(sessionOptions, modelPath, useCUDA: true);
             }
             catch (Exception ex)
             {
                 await Application.Current.Dispatcher.BeginInvoke(new Action(() => new NoticeBar($"Error starting the model via DirectML: {ex.Message}\n\nFalling back to CPU, performance may be poor.", 5000).Show()));
                 try
                 {
-                    await LoadModelAsync(sessionOptions, modelPath, useDirectML: false);
+                    await LoadModelAsync(sessionOptions, modelPath, useCUDA: false);
                 }
                 catch (Exception e)
                 {
@@ -108,11 +108,11 @@ namespace Aimmy2.AILogic
             FileManager.CurrentlyLoadingModel = false;
         }
 
-        private async Task LoadModelAsync(SessionOptions sessionOptions, string modelPath, bool useDirectML)
+        private async Task LoadModelAsync(SessionOptions sessionOptions, string modelPath, bool useCUDA)
         {
             try
             {
-                if (useDirectML) { sessionOptions.AppendExecutionProvider_DML(); }
+                if (useCUDA) { sessionOptions.AppendExecutionProvider_CUDA(0); } // Using GPU 0, task manager will tell you which GPU is being used in the "Performance" tab
                 else { sessionOptions.AppendExecutionProvider_CPU(); }
 
                 _onnxModel = new InferenceSession(modelPath, sessionOptions);
