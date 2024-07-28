@@ -162,7 +162,7 @@ namespace Aimmy2.AILogic
 
         private async void AiLoop()
         {
-            Stopwatch stopwatch = new();
+            //Stopwatch stopwatch = new();
             DetectedPlayerWindow? DetectedPlayerOverlay = Dictionary.DetectedPlayerOverlay;
 
             float scaleX = ScreenWidth / 640f;
@@ -170,7 +170,7 @@ namespace Aimmy2.AILogic
 
             while (_isAiLoopRunning)
             {
-                stopwatch.Restart();
+                //stopwatch.Restart();
 
                 UpdateFOV(); // Organization/Simplification of AILoop inspired/helped by @.harlans or @apraxo on github.
 
@@ -193,14 +193,20 @@ namespace Aimmy2.AILogic
 
                         HandleAim(closestPrediction);
 
-                        totalTime += stopwatch.ElapsedMilliseconds;
-                        iterationCount++;
+                        //totalTime += stopwatch.ElapsedMilliseconds;
+                        //iterationCount++;
                     }
 
-                    stopwatch.Stop();
+                    //stopwatch.Stop(); 
+                    //if (iterationCount == 1000)
+                    //{
+                    //    double averageTime = totalTime / 1000.0;
+                    //    Debug.WriteLine($"Average loop iteration time: {averageTime} ms");
+                    //    MessageBox.Show($"Average loop iteration time: {averageTime} ms (per 1000 loops)");
+                    //}
                 }
 
-                await Task.Delay(1); // Add a small delay to avoid high CPU usage
+                await Task.Delay(1/2); // Add a small delay to avoid high GPU/CPU usage
             }
         }
 
