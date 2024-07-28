@@ -22,9 +22,9 @@ If you want to share Aimmy with your friends, our website is: https://aimmy.dev/
 
 ## Table of Contents
 - [What is the purpose of Aimmy?](#what-is-the-purpose-of-aimmy)
+- [Setup](#setup)
 - [How does Aimmy Work?](#how-does-aimmy-work)
 - [Features](#features)
-- [Setup](#setup)
 - [How is Aimmy better than similar AI-Based tools?](#how-is-aimmy-better-than-similar-ai-based-tools)
 - [How the hell is Aimmy free?](#how-the-hell-is-aimmy-free)
 - [What is the Web Model?](#what-is-the-web-model)
@@ -44,6 +44,20 @@ If you want to share Aimmy with your friends, our website is: https://aimmy.dev/
 - Gamers with poor Hand/Eye coordination
 - Gamers who perform poorly in FPS games
 - Gamers who play for long periods in hot environments, causing greasy hands that make aiming difficult 
+
+## Setup
+- Download and Install the x64 version of [.NET Runtime 8.0.X.X](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.2-windows-x64-installer)
+- Download and Install the x64 version of [Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
+- Download and Install CUDA and cuDNN of [Cuda 12.x](https://developer.nvidia.com/cuda-downloads) and [cuDNN 9.x](https://developer.nvidia.com/cudnn-downloads).
+- Download Aimmy from [Releases](https://github.com/BabyHamsta/Aimmy/releases) (Make sure it's the Aimmy zip and not Source zip)
+- Extract the Aimmy.zip file
+- Run Aimmy.exe
+- Choose your Model and Enjoy :)
+### Troubleshooting CUDA
+Sometimes, when you load a model the application closes in an exception, this could mean:
+1. Your cuda installation is wrong. Check your PATH (env variables) for your Cuda installation and your cuDNN.
+2. You may need to install an older version of cuda, weird I know. Get [cuDNN 8.x](https://developer.nvidia.com/rdp/cudnn-archive) and [CUDA 11.x](https://developer.nvidia.com/cuda-toolkit-archive)
+3. Otherwise, make a ticket in our [discord server](discord.gg/aimmy)
 
 ## How does Aimmy Work?
 ```mermaid
@@ -81,14 +95,6 @@ When you press the trigger binding, Aimmy will capture the screen and run the im
 	- Aimmy lets you hotswap models and configurations on the go. There is no need to reset Aimmy to make your changes
 8. Model and Configuration Store with Repository Support
 	- Aimmy makes it easy to get any models and configurations you may ever need, and with repository support, you can get up to date with the latest models and configurations from your favorite creators
-
-## Setup
-- Download and Install the x64 version of [.NET Runtime 8.0.X.X](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.2-windows-x64-installer)
-- Download and Install the x64 version of [Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
-- Download Aimmy from [Releases](https://github.com/BabyHamsta/Aimmy/releases) (Make sure it's the Aimmy zip and not Source zip)
-- Extract the Aimmy.zip file
-- Run Aimmy.exe
-- Choose your Model and Enjoy :)
 
 ## How is Aimmy better than similar AI-Based tools?
 Aimmy is written in C# using .NET 8 and WPF utilizing pre-existing libraries like DirectML and ONNX. This has allowed us to make a very fast Aim Aligner with high compatiblity on both AMD and NVIDIA GPUs without sacrificing the end-user experience.
