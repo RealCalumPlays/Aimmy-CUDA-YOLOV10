@@ -82,10 +82,10 @@ namespace InputLogic
                     mouseUpAction = () => RZMouse.mouse_click(0);
                     break;
 
-                case "ddxoft Virtual Input Driver":
-                    mouseDownAction = () => DdxoftMain.ddxoftInstance.btn!(1);
-                    mouseUpAction = () => DdxoftMain.ddxoftInstance.btn(2);
-                    break;
+                //case "ddxoft Virtual Input Driver":
+                //    mouseDownAction = () => DdxoftMain.ddxoftInstance.btn!(1);
+                //    mouseUpAction = () => DdxoftMain.ddxoftInstance.btn(2);
+                //    break;
 
                 default:
                     mouseDownAction = () => mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
@@ -126,9 +126,9 @@ namespace InputLogic
                     RZMouse.mouse_move(xRecoil, yRecoil, true);
                     break;
 
-                case "ddxoft Virtual Input Driver":
-                    DdxoftMain.ddxoftInstance.movR!(xRecoil, yRecoil);
-                    break;
+                //case "ddxoft Virtual Input Driver":
+                //    DdxoftMain.ddxoftInstance.movR!(xRecoil, yRecoil);
+                //    break;
 
                 default:
                     mouse_event(MOUSEEVENTF_MOVE, (uint)xRecoil, (uint)yRecoil, 0, 0);
@@ -180,9 +180,9 @@ namespace InputLogic
                     RZMouse.mouse_move(newPosition.X, newPosition.Y, true);
                     break;
 
-                case "ddxoft Virtual Input Driver":
-                    DdxoftMain.ddxoftInstance.movR!(newPosition.X, newPosition.Y);
-                    break;
+                //case "ddxoft Virtual Input Driver":
+                //    DdxoftMain.ddxoftInstance.movR!(newPosition.X, newPosition.Y);
+                //    break;
 
                 default:
                     mouse_event(MOUSEEVENTF_MOVE, (uint)newPosition.X, (uint)newPosition.Y, 0, 0);

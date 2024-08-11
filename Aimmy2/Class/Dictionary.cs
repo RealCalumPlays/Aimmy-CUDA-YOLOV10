@@ -66,7 +66,9 @@ namespace Aimmy2.Class
             { "Mouse Background Effect", true },
             { "UI TopMost", false },
             { "X Axis Percentage Adjustment", false },
-            { "Y Axis Percentage Adjustment", false }
+            { "Y Axis Percentage Adjustment", false },
+            { "Debug Mode", false },
+            { "Show FPS", false }
         };
 
         public static Dictionary<string, dynamic> minimizeState = new()
@@ -87,7 +89,8 @@ namespace Aimmy2.Class
             { "Prediction Method", "Kalman Filter" },
             { "Detection Area Type", "Closest to Center Screen" },
             { "Aiming Boundaries Alignment", "Center" },
-            { "Mouse Movement Method", "Mouse Event" }
+            { "Mouse Movement Method", "Mouse Event" },
+            { "Screen Capture Method", "DirectX"}
         };
 
         public static Dictionary<string, dynamic> colorState = new()

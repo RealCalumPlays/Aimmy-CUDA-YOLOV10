@@ -9,7 +9,7 @@
              mc:Ignorable="d"
              d:DesignWidth="282.5"
              Height="70">
-    <Grid>
+    <Grid x:Name="Grid">
         <Border Height="70"
                 Background="#3F3C3C3C"
                 CornerRadius="00"

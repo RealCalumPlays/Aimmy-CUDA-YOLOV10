@@ -6,7 +6,6 @@ using AimmyWPF.Class;
 using Class;
 using InputLogic;
 using Microsoft.Win32;
-using MouseMovementLibraries.ddxoftSupport;
 using MouseMovementLibraries.RazerSupport;
 using Other;
 using System.Diagnostics;
@@ -102,6 +101,8 @@ namespace Aimmy2
             SaveDictionary.LoadJSON(Dictionary.dropdownState, "bin\\dropdown.cfg");
             LoadDropdownStates();
 
+            LoadMenuMinimizers();
+            VisibilityXY();
             PropertyChanger.ReceiveNewConfig = LoadConfig;
 
             ActualFOV = Dictionary.sliderSettings["FOV Size"];
@@ -115,11 +116,38 @@ namespace Aimmy2
             PropertyChanger.PostDPWOpacity((double)Dictionary.sliderSettings["Opacity"]);
 
             ListenForKeybinds();
-            LoadMenuMinimizers();
         }
 
         private async void LoadStoreMenuAsync() => await LoadStoreMenu();
+        private void VisibilityXY()
+        {
+            // X/Y Percentage Adjustment Toggles
+            bool xPercentageAdjustment = Dictionary.toggleState["X Axis Percentage Adjustment"];
+            bool yPercentageAdjustment = Dictionary.toggleState["Y Axis Percentage Adjustment"];
 
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (uiManager?.S_XOffset != null)
+                {
+                    uiManager.S_XOffset.Visibility = xPercentageAdjustment ? Visibility.Collapsed : Visibility.Visible;
+                }
+
+                if (uiManager?.S_XOffsetPercent != null)
+                {
+                    uiManager.S_XOffsetPercent.Visibility = xPercentageAdjustment ? Visibility.Visible : Visibility.Collapsed;
+                }
+
+                if (uiManager?.S_YOffset != null)
+                {
+                    uiManager.S_YOffset.Visibility = yPercentageAdjustment ? Visibility.Collapsed : Visibility.Visible;
+                }
+
+                if (uiManager?.S_YOffsetPercent != null)
+                {
+                    uiManager.S_YOffsetPercent.Visibility = yPercentageAdjustment ? Visibility.Visible : Visibility.Collapsed;
+                }
+            });
+        }
         private void Window_Loaded(object sender, RoutedEventArgs e) => AboutSpecs.Content = $"{GetProcessorName()} • {GetVideoControllerName()} • {GetFormattedMemorySize()}GB RAM";
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => DragMove();
@@ -318,7 +346,11 @@ namespace Aimmy2
                 case "Show AI Confidence":
                     DPWindow.DetectedPlayerConfidence.Visibility = Dictionary.toggleState[title] ? Visibility.Visible : Visibility.Collapsed;
                     break;
-
+                
+                case "Show FPS":
+                    DPWindow.FpsLabel.Visibility = Dictionary.toggleState[title] ? Visibility.Visible : Visibility.Collapsed;
+                    break;
+                
                 case "Mouse Background Effect":
                     if (!Dictionary.toggleState[title]) { RotaryGradient.Angle = 0; }
                     break;
@@ -329,7 +361,6 @@ namespace Aimmy2
 
                 case "EMA Smoothening":
                     MouseManager.IsEMASmoothingEnabled = Dictionary.toggleState[title];
-                    //Debug.WriteLine(MouseManager.IsEMASmoothingEnabled);
                     break;
             }
         }
@@ -632,11 +663,12 @@ namespace Aimmy2
             };
             uiManager.S_MouseJitter = AddSlider(AimConfig, "Mouse Jitter", "Jitter", 1, 1, 0, 15);
 
+            uiManager.S_XOffset = AddSlider(AimConfig, "X Offset (Left/Right)", "Offset", 1, 1, -150, 150);
+            uiManager.S_XOffsetPercent = AddSlider(AimConfig, "X Offset (%)", "Percent", 1, 1, 0, 100);
+
             uiManager.S_YOffset = AddSlider(AimConfig, "Y Offset (Up/Down)", "Offset", 1, 1, -150, 150);
             uiManager.S_YOffsetPercent = AddSlider(AimConfig, "Y Offset (%)", "Percent", 1, 1, 0, 100);
 
-            uiManager.S_XOffset = AddSlider(AimConfig, "X Offset (Left/Right)", "Offset", 1, 1, -150, 150);
-            uiManager.S_XOffsetPercent = AddSlider(AimConfig, "X Offset (%)", "Percent", 1, 1, 0, 100);
 
             uiManager.S_EMASmoothing = AddSlider(AimConfig, "EMA Smoothening", "Amount", 0.01, 0.01, 0.01, 1);
 
@@ -799,7 +831,7 @@ namespace Aimmy2
                 }
             };
 
-            uiManager.DDI_RazerSynapse = AddDropdownItem(uiManager.D_MouseMovementMethod, "Razer Synapse (Require Razer Peripheral)");
+            uiManager.DDI_RazerSynapse = AddDropdownItem(uiManager.D_MouseMovementMethod, "Razer Synapse (Requires Razer Peripheral)");
             uiManager.DDI_RazerSynapse.Selected += async (sender, e) =>
             {
                 if (!await RZMouse.Load())
@@ -807,14 +839,21 @@ namespace Aimmy2
                     SelectMouseEvent();
                 }
             };
-            uiManager.DDI_ddxoft = AddDropdownItem(uiManager.D_MouseMovementMethod, "ddxoft Virtual Input Driver");
-            uiManager.DDI_ddxoft.Selected += async (sender, e) =>
-            {
-                if (!await DdxoftMain.Load())
-                {
-                    SelectMouseEvent();
-                }
-            };
+            
+            //uiManager.DDI_ddxoft = AddDropdownItem(uiManager.D_MouseMovementMethod, "ddxoft Virtual Input Driver");
+            //uiManager.DDI_ddxoft.Selected += async (sender, e) =>
+            //{
+            //    if (!await DdxoftMain.Load())
+            //    {
+            //        SelectMouseEvent();
+            //    }
+            //};
+            
+            //uiManager.D_ScreenCaptureMethod = AddDropdown(SettingsConfig, "Screen Capture Method");
+            //AddDropdownItem(uiManager.D_ScreenCaptureMethod, "DirectX");
+            
+            //AddDropdownItem(uiManager.D_ScreenCaptureMethod, "GDI+");
+
             uiManager.S_AIMinimumConfidence = AddSlider(SettingsConfig, "AI Minimum Confidence", "% Confidence", 1, 1, 1, 100);
             uiManager.S_AIMinimumConfidence.Slider.PreviewMouseLeftButtonUp += (sender, e) =>
             {
@@ -823,15 +862,37 @@ namespace Aimmy2
             };
             uiManager.T_MouseBackgroundEffect = AddToggle(SettingsConfig, "Mouse Background Effect");
             uiManager.T_UITopMost = AddToggle(SettingsConfig, "UI TopMost");
+            uiManager.T_DebugMode = AddToggle(SettingsConfig, "Debug Mode");
+            uiManager.T_ShowFPS = AddToggle(SettingsConfig, "Show FPS");
             uiManager.B_SaveConfig = AddButton(SettingsConfig, "Save Config");
             uiManager.B_SaveConfig.Reader.Click += (s, e) => new ConfigSaver().ShowDialog();
 
             AddSeparator(SettingsConfig);
 
-            // X/Y Percentage Adjustment Toggles
             uiManager.AT_XYPercentageAdjustmentEnabler = AddTitle(XYPercentageEnablerMenu, "X/Y Percentage Adjustment", true);
             uiManager.T_XAxisPercentageAdjustment = AddToggle(XYPercentageEnablerMenu, "X Axis Percentage Adjustment");
-            uiManager.T_YAxisPercentageAdjustment = AddToggle(XYPercentageEnablerMenu, "Y Axis Percentage Adjustment");
+            uiManager.T_YAxisPercentageAdjustment = AddToggle(XYPercentageEnablerMenu, "Y Axis Percentage Adjustment"); 
+
+            uiManager.T_XAxisPercentageAdjustment.Reader.Click += (s, e) =>
+            {
+                bool isPercentageAdjustmentOn = Dictionary.toggleState["X Axis Percentage Adjustment"];
+                if (uiManager?.S_XOffset != null && uiManager?.S_XOffsetPercent != null)
+                {
+                    uiManager.S_XOffset.Visibility = isPercentageAdjustmentOn ? Visibility.Collapsed : Visibility.Visible;
+                    uiManager.S_XOffsetPercent.Visibility = isPercentageAdjustmentOn ? Visibility.Visible : Visibility.Collapsed;
+                }
+            };
+
+            uiManager.T_YAxisPercentageAdjustment.Reader.Click += (s, e) =>
+            {
+                bool isPercentageAdjustmentOn = Dictionary.toggleState["Y Axis Percentage Adjustment"];
+                if (uiManager?.S_YOffset != null && uiManager?.S_YOffsetPercent != null)
+                {
+                    uiManager.S_YOffset.Visibility = isPercentageAdjustmentOn ? Visibility.Collapsed : Visibility.Visible;
+                    uiManager.S_YOffsetPercent.Visibility = isPercentageAdjustmentOn ? Visibility.Visible : Visibility.Collapsed;
+                }
+            };
+
             AddSeparator(XYPercentageEnablerMenu);
 
             // ddxoft Menu
