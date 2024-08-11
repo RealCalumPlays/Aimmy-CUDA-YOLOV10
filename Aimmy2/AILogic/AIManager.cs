@@ -271,7 +271,7 @@ namespace Aimmy2.AILogic
                 {
                     double averageTime = totalTime / 1000.0;
                     Debug.WriteLine($"Average loop iteration time: {averageTime} ms");
-                    MessageBox.Show($"Average loop iteration time: {averageTime} ms", "I hope this annoyed you mid game... Share this iteration time on our discord!");
+                    MessageBox.Show($"Average loop iteration time: {averageTime} ms", "Share this iteration time on our discord!");
                     totalTime = 0;
                     iterationCount = 0;
                 }
