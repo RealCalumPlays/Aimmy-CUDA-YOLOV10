@@ -19,13 +19,13 @@ This is a fork of [Aimmy](https://github.com/Babyhamsta/Aimmy/), if any problems
 - Download and Install the x64 version of [.NET Runtime 8.0.X.X](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.2-windows-x64-installer)
 - Download and Install the x64 version of [.NET Runtime 7.0.X.X](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-7.0.20-windows-x64-installer)
 - Download and Install the x64 version of [Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
-- **Download and Install CUDA and cuDNN of [CUDA 12.x](https://developer.nvidia.com/cuda-downloads) and [cuDNN 9.x](https://developer.nvidia.com/cudnn-downloads).**
 - Download Aimmy from [Releases](https://github.com/TaylorIsBlue/Aimmy-CUDA/releases) (Make sure it's the Aimmy zip and not Source zip)
-- Extract the Aimmy.zip file
+**- Get [cuDNN 8.9.x](https://developer.nvidia.com/rdp/cudnn-archive) and [CUDA 11.8]([https://developer.nvidia.com/cuda-toolkit-archive](https://developer.nvidia.com/cuda-11-8-0-download-archive))
+**- Extract the Aimmy.zip file
 - Run Aimmy.exe
 - Choose your Model and Enjoy :)
 ### Troubleshooting CUDA
 Sometimes, when you load a model the application closes in an exception, this could mean:
 1. Your cuda installation is wrong. Check your PATH (env variables) for your Cuda installation and your cuDNN.
-2. You may need to install an older version of cuda, weird I know. Get [cuDNN 8.x](https://developer.nvidia.com/rdp/cudnn-archive) and [CUDA 11.x](https://developer.nvidia.com/cuda-toolkit-archive)
+2. Download and Install CUDA and cuDNN of [CUDA 12.x](https://developer.nvidia.com/cuda-downloads) and [cuDNN 9.x](https://developer.nvidia.com/cudnn-downloads), maybe you need to switch versions im not sure its kind of weird.
 3. Otherwise, make a ticket in our [discord server](discord.gg/aimmy)
