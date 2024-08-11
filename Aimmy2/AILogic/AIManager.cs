@@ -288,7 +288,6 @@ namespace Aimmy2.AILogic
                             continue;
                         }
 
-
                         await AutoTrigger();
 
                         CalculateCoordinates(DetectedPlayerOverlay, closestPrediction, scaleX, scaleY);
@@ -760,7 +759,7 @@ namespace Aimmy2.AILogic
 
         private void SaveFrame(Bitmap frame, Prediction? DoLabel = null)
         {
-            if (!Dictionary.toggleState["Collect Data While Playing"] && Dictionary.toggleState["Constant AI Tracking"]) return;
+            if (!Dictionary.toggleState["Collect Data While Playing"] || Dictionary.toggleState["Constant AI Tracking"]) return;
             if ((DateTime.Now - lastSavedTime).TotalMilliseconds < 500) return;
 
             lastSavedTime = DateTime.Now;
