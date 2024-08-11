@@ -20,7 +20,7 @@ This is a fork of [Aimmy](https://github.com/Babyhamsta/Aimmy/), if any problems
 - Download and Install the x64 version of [.NET Runtime 7.0.X.X](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-7.0.20-windows-x64-installer)
 - Download and Install the x64 version of [Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 - Download Aimmy from [Releases](https://github.com/TaylorIsBlue/Aimmy-CUDA/releases) (Make sure it's the Aimmy zip and not Source zip)
-- **Get [cuDNN 8.9.x](https://developer.nvidia.com/rdp/cudnn-archive) and [CUDA 11.8]([https://developer.nvidia.com/cuda-toolkit-archive](https://developer.nvidia.com/cuda-11-8-0-download-archive))**
+- **Get [cuDNN 8.9.x](https://developer.nvidia.com/rdp/cudnn-archive) and [CUDA 11.8](https://developer.nvidia.com/cuda-11-8-0-download-archive)**
 - Extract the Aimmy.zip file
 - Run Aimmy.exe
 - Choose your Model and Enjoy :)
