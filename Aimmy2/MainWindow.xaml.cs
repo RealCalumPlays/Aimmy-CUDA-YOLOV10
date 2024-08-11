@@ -362,12 +362,12 @@ namespace Aimmy2
                 case "EMA Smoothening":
                     MouseManager.IsEMASmoothingEnabled = Dictionary.toggleState[title];
                     break;
-                case "X Axis Percentage Adjustment":
-                    VisibilityXY();
-                    break;
-                case "Y Axis Percentage Adjustment":
-                    VisibilityXY();
-                    break;
+                //case "X Axis Percentage Adjustment":
+                //    VisibilityXY();
+                //    break;
+                //case "Y Axis Percentage Adjustment":
+                //    VisibilityXY();
+                //    break;
             }
         }
 
