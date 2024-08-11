@@ -97,12 +97,15 @@ namespace Class
         public AToggle? T_CollectDataWhilePlaying { get; set; }
         public AToggle? T_AutoLabelData { get; set; }
         public ADropdown? D_MouseMovementMethod { get; set; }
+        public ADropdown? D_ScreenCaptureMethod { get; set; }
         public ComboBoxItem? DDI_LGHUB { get; set; }
         public ComboBoxItem? DDI_RazerSynapse { get; set; }
         public ComboBoxItem? DDI_ddxoft { get; set; }
         public ASlider? S_AIMinimumConfidence { get; set; }
         public AToggle? T_MouseBackgroundEffect { get; set; }
         public AToggle? T_UITopMost { get; set; }
+        public AToggle? T_DebugMode { get; set; }
+        public AToggle? T_ShowFPS { get; set; }
         public APButton? B_SaveConfig { get; set; }
         public APButton? B_Debug { get; set; }
 
@@ -112,7 +115,7 @@ namespace Class
         public AToggle? T_YAxisPercentageAdjustment { get; set; }
 
         // ddxoft UI
-        public AFileLocator? AFL_ddxoftDLLLocator { get; set; }
+        //public AFileLocator? AFL_ddxoftDLLLocator { get; set; }
 
         // Stores
         public APButton? B_RepoManager { get; set; }

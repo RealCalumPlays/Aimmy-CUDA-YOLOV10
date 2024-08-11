@@ -16,6 +16,8 @@
         ResizeMode="NoResize"
         IsTabStop="False">
     <Grid>
+        <Label x:Name="FpsLabel" Content="FPS: 0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" FontSize="15" Foreground="Red" Visibility="Collapsed"
+               FontFamily="Consolas"/>
         <Label x:Name="DetectedPlayerConfidence"
                HorizontalAlignment="Left"
                VerticalAlignment="Top"
@@ -33,7 +35,6 @@
                 BorderThickness="1"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Visibility="Visible"
                 Opacity="0" />
         <Line x:Name="DetectedTracers"
               X1="0"
