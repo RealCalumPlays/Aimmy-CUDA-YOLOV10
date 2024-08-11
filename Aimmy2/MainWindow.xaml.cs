@@ -102,7 +102,7 @@ namespace Aimmy2
             LoadDropdownStates();
 
             LoadMenuMinimizers();
-            VisibilityXY();
+            //VisibilityXY();
             PropertyChanger.ReceiveNewConfig = LoadConfig;
 
             ActualFOV = Dictionary.sliderSettings["FOV Size"];
@@ -119,35 +119,35 @@ namespace Aimmy2
         }
 
         private async void LoadStoreMenuAsync() => await LoadStoreMenu();
-        private void VisibilityXY()
-        {
-            // X/Y Percentage Adjustment Toggles
-            bool xPercentageAdjustment = Dictionary.toggleState["X Axis Percentage Adjustment"];
-            bool yPercentageAdjustment = Dictionary.toggleState["Y Axis Percentage Adjustment"];
+        //private void VisibilityXY()
+        //{
+        //    // X/Y Percentage Adjustment Toggles
+        //    bool xPercentageAdjustment = Dictionary.toggleState["X Axis Percentage Adjustment"];
+        //    bool yPercentageAdjustment = Dictionary.toggleState["Y Axis Percentage Adjustment"];
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (uiManager?.S_XOffset != null)
-                {
-                    uiManager.S_XOffset.Visibility = xPercentageAdjustment ? Visibility.Collapsed : Visibility.Visible;
-                }
+        //    Application.Current.Dispatcher.Invoke(() =>
+        //    {
+        //        if (uiManager?.S_XOffset != null)
+        //        {
+        //            uiManager.S_XOffset.Visibility = xPercentageAdjustment ? Visibility.Collapsed : Visibility.Visible;
+        //        }
 
-                if (uiManager?.S_XOffsetPercent != null)
-                {
-                    uiManager.S_XOffsetPercent.Visibility = xPercentageAdjustment ? Visibility.Visible : Visibility.Collapsed;
-                }
+        //        if (uiManager?.S_XOffsetPercent != null)
+        //        {
+        //            uiManager.S_XOffsetPercent.Visibility = xPercentageAdjustment ? Visibility.Visible : Visibility.Collapsed;
+        //        }
 
-                if (uiManager?.S_YOffset != null)
-                {
-                    uiManager.S_YOffset.Visibility = yPercentageAdjustment ? Visibility.Collapsed : Visibility.Visible;
-                }
+        //        if (uiManager?.S_YOffset != null)
+        //        {
+        //            uiManager.S_YOffset.Visibility = yPercentageAdjustment ? Visibility.Collapsed : Visibility.Visible;
+        //        }
 
-                if (uiManager?.S_YOffsetPercent != null)
-                {
-                    uiManager.S_YOffsetPercent.Visibility = yPercentageAdjustment ? Visibility.Visible : Visibility.Collapsed;
-                }
-            });
-        }
+        //        if (uiManager?.S_YOffsetPercent != null)
+        //        {
+        //            uiManager.S_YOffsetPercent.Visibility = yPercentageAdjustment ? Visibility.Visible : Visibility.Collapsed;
+        //        }
+        //    });
+        //}
         private void Window_Loaded(object sender, RoutedEventArgs e) => AboutSpecs.Content = $"{GetProcessorName()} • {GetVideoControllerName()} • {GetFormattedMemorySize()}GB RAM";
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => DragMove();
@@ -361,6 +361,12 @@ namespace Aimmy2
 
                 case "EMA Smoothening":
                     MouseManager.IsEMASmoothingEnabled = Dictionary.toggleState[title];
+                    break;
+                case "X Axis Percentage Adjustment":
+                    VisibilityXY();
+                    break;
+                case "Y Axis Percentage Adjustment":
+                    VisibilityXY();
                     break;
             }
         }
@@ -873,25 +879,25 @@ namespace Aimmy2
             uiManager.T_XAxisPercentageAdjustment = AddToggle(XYPercentageEnablerMenu, "X Axis Percentage Adjustment");
             uiManager.T_YAxisPercentageAdjustment = AddToggle(XYPercentageEnablerMenu, "Y Axis Percentage Adjustment"); 
 
-            uiManager.T_XAxisPercentageAdjustment.Reader.Click += (s, e) =>
-            {
-                bool isPercentageAdjustmentOn = Dictionary.toggleState["X Axis Percentage Adjustment"];
-                if (uiManager?.S_XOffset != null && uiManager?.S_XOffsetPercent != null)
-                {
-                    uiManager.S_XOffset.Visibility = isPercentageAdjustmentOn ? Visibility.Collapsed : Visibility.Visible;
-                    uiManager.S_XOffsetPercent.Visibility = isPercentageAdjustmentOn ? Visibility.Visible : Visibility.Collapsed;
-                }
-            };
+            //uiManager.T_XAxisPercentageAdjustment.Reader.Click += (s, e) =>
+            //{
+            //    bool isPercentageAdjustmentOn = Dictionary.toggleState["X Axis Percentage Adjustment"];
+            //    if (uiManager?.S_XOffset != null && uiManager?.S_XOffsetPercent != null)
+            //    {
+            //        uiManager.S_XOffset.Visibility = isPercentageAdjustmentOn ? Visibility.Collapsed : Visibility.Visible;
+            //        uiManager.S_XOffsetPercent.Visibility = isPercentageAdjustmentOn ? Visibility.Visible : Visibility.Collapsed;
+            //    }
+            //};
 
-            uiManager.T_YAxisPercentageAdjustment.Reader.Click += (s, e) =>
-            {
-                bool isPercentageAdjustmentOn = Dictionary.toggleState["Y Axis Percentage Adjustment"];
-                if (uiManager?.S_YOffset != null && uiManager?.S_YOffsetPercent != null)
-                {
-                    uiManager.S_YOffset.Visibility = isPercentageAdjustmentOn ? Visibility.Collapsed : Visibility.Visible;
-                    uiManager.S_YOffsetPercent.Visibility = isPercentageAdjustmentOn ? Visibility.Visible : Visibility.Collapsed;
-                }
-            };
+            //uiManager.T_YAxisPercentageAdjustment.Reader.Click += (s, e) =>
+            //{
+            //    bool isPercentageAdjustmentOn = Dictionary.toggleState["Y Axis Percentage Adjustment"];
+            //    if (uiManager?.S_YOffset != null && uiManager?.S_YOffsetPercent != null)
+            //    {
+            //        uiManager.S_YOffset.Visibility = isPercentageAdjustmentOn ? Visibility.Collapsed : Visibility.Visible;
+            //        uiManager.S_YOffsetPercent.Visibility = isPercentageAdjustmentOn ? Visibility.Visible : Visibility.Collapsed;
+            //    }
+            //};
 
             AddSeparator(XYPercentageEnablerMenu);
 
