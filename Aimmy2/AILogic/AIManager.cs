@@ -166,7 +166,7 @@ namespace Aimmy2.AILogic
                 }
                 catch (Exception e)
                 {
-                    await Application.Current.Dispatcher.BeginInvoke(new Action(() => new NoticeBar($"Error starting the model via DirectML: {e.Message}, you won't be able to aim assist at all.", 5000).Show()));
+                    await Application.Current.Dispatcher.BeginInvoke(new Action(() => new NoticeBar($"Error starting the model via Tensorrt: {e.Message}, you won't be able to aim assist at all.", 5000).Show()));
                 }
             }
 
@@ -179,8 +179,8 @@ namespace Aimmy2.AILogic
             {
                 if (useCUDA) { sessionOptions.AppendExecutionProvider_CUDA(0); } // Using GPU 0, task manager will tell you which GPU is being used in the "Performance" tab
                 else { 
-                    sessionOptions.AppendExecutionProvider_DML(); 
-                    await Application.Current.Dispatcher.BeginInvoke(new Action(() => new NoticeBar("Starting model with DirectML...", 2000)));
+                    sessionOptions.AppendExecutionProvider_Tensorrt(); 
+                    await Application.Current.Dispatcher.BeginInvoke(new Action(() => new NoticeBar("Starting model with tensorrt...", 2000)));
                 }
 
                 _onnxModel = new InferenceSession(modelPath, sessionOptions);
