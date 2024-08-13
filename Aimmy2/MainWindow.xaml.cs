@@ -1125,9 +1125,17 @@ namespace Aimmy2
 
         private void OpenFolderB_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button clickedButton)
+            if (sender is Button clickedButton && clickedButton.Tag != null)
             {
-                Process.Start("explorer.exe", Directory.GetCurrentDirectory() + "bin\\" + clickedButton.Tag.ToString());
+                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "bin", clickedButton.Tag.ToString());
+                if (Directory.Exists(folderPath))
+                {
+                    Process.Start("explorer.exe", folderPath);
+                }
+                else
+                {
+                    MessageBox.Show($"The folder '{folderPath}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -1195,7 +1203,7 @@ namespace Aimmy2
         private async void CheckForUpdates_Click(object sender, RoutedEventArgs e)
         {
             UpdateManager updateManager = new UpdateManager();
-            await updateManager.CheckForUpdate("v2.2.0");
+            await updateManager.CheckForUpdate("v2.1.7");
             updateManager.Dispose();
         }
 

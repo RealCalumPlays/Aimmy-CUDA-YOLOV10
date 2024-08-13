@@ -50,7 +50,7 @@ namespace Aimmy2.AILogic
         private Thread? _aiLoopThread;
         private bool _isAiLoopRunning;
 
-	    //fps - copilot, rolling average calculation
+        //fps - copilot, rolling average calculation
         private const int MAXSAMPLES = 100;
         private double[] frameTimes = new double[MAXSAMPLES];
         private int frameTimeIndex = 0;
@@ -67,7 +67,7 @@ namespace Aimmy2.AILogic
 
         private int PrevY = 0;
 
-       // private int IndependentMousePress = 0;
+        // private int IndependentMousePress = 0;
 
         private int iterationCount = 0;
         private long totalTime = 0;
@@ -131,7 +131,7 @@ namespace Aimmy2.AILogic
 
             // Get DXGI output
             using var dxgiDevice = _device.QueryInterface<IDXGIDevice>();
-            using var adapter = dxgiDevice.GetAdapter(); 
+            using var adapter = dxgiDevice.GetAdapter();
             if (adapter.EnumOutputs(0, out var outputTemp) != Result.Ok)
             {
                 throw new InvalidOperationException("Failed to enumerate outputs.");
@@ -178,8 +178,9 @@ namespace Aimmy2.AILogic
             try
             {
                 if (useCUDA) { sessionOptions.AppendExecutionProvider_CUDA(0); } // Using GPU 0, task manager will tell you which GPU is being used in the "Performance" tab
-                else { 
-                    sessionOptions.AppendExecutionProvider_Tensorrt(); 
+                else
+                {
+                    sessionOptions.AppendExecutionProvider_Tensorrt();
                     await Application.Current.Dispatcher.BeginInvoke(new Action(() => new NoticeBar("Starting model with tensorrt...", 2000)));
                 }
 
@@ -253,7 +254,7 @@ namespace Aimmy2.AILogic
                 if (Dictionary.toggleState["Show FPS"])
                 {
                     double frameTime = stopwatch.Elapsed.TotalSeconds;
-                    UpdateFps(frameTime); 
+                    UpdateFps(frameTime);
                     if (frameTimeIndex % 10 == 0)
                     {
                         Application.Current.Dispatcher.Invoke(() =>
@@ -267,13 +268,16 @@ namespace Aimmy2.AILogic
 
                 UpdateFOV();
 
-                if (iterationCount == 1000 && Dictionary.toggleState["Debug Mode"])
+                if (iterationCount == 1000)
                 {
-                    double averageTime = totalTime / 1000.0;
-                    Debug.WriteLine($"Average loop iteration time: {averageTime} ms");
-                    MessageBox.Show($"Average loop iteration time: {averageTime} ms", "Share this iteration time on our discord!");
-                    totalTime = 0;
-                    iterationCount = 0;
+                    if (Dictionary.toggleState["Debug Mode"])
+                    {
+                        double averageTime = totalTime / 1000.0;
+                        Debug.WriteLine($"Average loop iteration time: {averageTime} ms");
+                        MessageBox.Show($"Average loop iteration time: {averageTime} ms", "Share this iteration time on our discord!");
+                        totalTime = 0;
+                        iterationCount = 0;
+                    }
                 }
 
                 if (ShouldProcess())
@@ -474,7 +478,7 @@ namespace Aimmy2.AILogic
 
         private void HandlePredictions(KalmanPrediction kalmanPrediction, Prediction closestPrediction, int detectedX, int detectedY)
         {
-            var predictionMethod = Dictionary.dropdownState["Prediction Method"]; 
+            var predictionMethod = Dictionary.dropdownState["Prediction Method"];
             DateTime currentTime = DateTime.UtcNow;
 
             switch (predictionMethod)
@@ -702,7 +706,7 @@ namespace Aimmy2.AILogic
 
                 _deviceContext.CopySubresourceRegion(_desktopImage, 0, 0, 0, 0, screenTexture, 0, box);
 
-                if(_desktopImage == null) return null;
+                if (_desktopImage == null) return null;
                 var dataBox = _deviceContext.Map(_desktopImage, 0, MapMode.Read, Vortice.Direct3D11.MapFlags.None);
 
                 if (_screenCaptureBitmap == null) return null;
@@ -753,13 +757,14 @@ namespace Aimmy2.AILogic
         //    }
 
         //    _graphics?.CopyFromScreen(detectionBox.Left, detectionBox.Top, 0, 0, detectionBox.Size, CopyPixelOperation.SourceCopy);
-            
+
         //    return _screenCaptureBitmap;
         //}
 
         private void SaveFrame(Bitmap frame, Prediction? DoLabel = null)
         {
-            if (!Dictionary.toggleState["Collect Data While Playing"] || Dictionary.toggleState["Constant AI Tracking"]) return;
+            if (!Dictionary.toggleState["Collect Data While Playing"]) return;
+            if (Dictionary.toggleState["Constant AI Tracking"]) return;
             if ((DateTime.Now - lastSavedTime).TotalMilliseconds < 500) return;
 
             lastSavedTime = DateTime.Now;
