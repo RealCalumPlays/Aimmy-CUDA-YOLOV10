@@ -12,7 +12,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
-using System.Windows.Threading;
 using Visuality;
 using Vortice.Direct3D;
 using Vortice.Direct3D11;
@@ -180,7 +179,7 @@ namespace Aimmy2.AILogic
         {
             try
             {
-                if (useCUDA) { sessionOptions.AppendExecutionProvider_CUDA(0); } // Using GPU 0, task manager will tell you which GPU is being used in the "Performance" tab
+                if (useCUDA) { sessionOptions.AppendExecutionProvider_CUDA(); } // Using GPU 0, task manager will tell you which GPU is which (0,1,2, etc) in the "Performance" tab
                 else
                 {
                     sessionOptions.AppendExecutionProvider_Tensorrt();

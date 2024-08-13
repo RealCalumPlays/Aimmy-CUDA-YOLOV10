@@ -40,15 +40,24 @@ namespace MouseMovementLibraries.RazerSupport
             return Razer_HID.Count != 0;
         }
 
+        private static readonly string[] RazerSynapseProcesses =
+        {
+            "RazerAppEngine",
+            "Razer Synapse",
+            "Razer Synapse Beta",
+            "Razer Synapse 3",
+            "Razer Synapse 3 Beta"
+        };
+        private static bool IsRazerSynapseRunning()
+        {
+            return RazerSynapseProcesses.Any(processName => Process.GetProcessesByName(processName).Any());
+        }
         public static async Task<bool> CheckRazerSynapseInstall() // returns true if running/installed and false if not installed/running
         {
-            bool isSynapseRunning = Process.GetProcessesByName("RazerAppEngine").Any();
+            if (IsRazerSynapseRunning()) return true;
 
-            if (isSynapseRunning) return true;
-
-            var result = MessageBox.Show("Razer Synapse is not running, do you have it installed?",
+            var result = MessageBox.Show("Razer Synapse is not running (Or we cannot find the process), do you have it installed?",
                                          "Aimmy - Razer Synapse", MessageBoxButton.YesNo);
-            //Debug.WriteLine("Couldn't Find Process");
             if (result == MessageBoxResult.No)
             {
                 await InstallRazerSynapse();
