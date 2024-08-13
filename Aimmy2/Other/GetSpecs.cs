@@ -1,4 +1,5 @@
-﻿using System.Management;
+﻿using Other;
+using System.Management;
 using Visuality;
 
 namespace Aimmy2.Class
@@ -20,6 +21,8 @@ namespace Aimmy2.Class
             }
             catch (Exception e)
             {
+
+                FileManager.LogError("Failed to get specs: " + e);
                 new NoticeBar(e.Message, 10000).Show();
                 return "Not Found";
             }

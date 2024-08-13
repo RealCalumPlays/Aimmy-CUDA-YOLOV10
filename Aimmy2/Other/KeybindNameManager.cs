@@ -46,8 +46,9 @@ namespace Other
                 var key = (Key)kc.ConvertFromString(keyName)!;
                 return KeybindNames.TryGetValue(key.ToString(), out var displayName) ? displayName : key.ToString();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                FileManager.LogError("Failed to grab keybind (most likely a missing keybind from dictionary) " + ex);
                 return keyName;
             }
         }

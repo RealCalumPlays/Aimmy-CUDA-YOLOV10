@@ -63,6 +63,7 @@ namespace Other
             }
             catch (Exception ex)
             {
+                LogError("Error creating a required directory: " + ex);
                 MessageBox.Show($"Error creating a required directory: {ex}");
                 Application.Current.Shutdown();
             }
@@ -202,7 +203,15 @@ namespace Other
                 });
             }
         }
-
+        public static void LogError(string message)
+        {
+            if (Dictionary.toggleState["Debug Mode"])
+            {
+                string logFilePath = "debug.txt";
+                using StreamWriter writer = new StreamWriter(logFilePath, true);
+                writer.WriteLine($"[{DateTime.Now}]: {message}");
+            }
+        }
         public static async Task<HashSet<string>> RetrieveAndAddFiles(string repoLink, string localPath, HashSet<string> allFiles)
         {
             try
@@ -227,6 +236,7 @@ namespace Other
             }
             catch (Exception ex)
             {
+                LogError(ex.ToString());
                 throw new Exception(ex.ToString());
             }
         }
