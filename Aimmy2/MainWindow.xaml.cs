@@ -930,7 +930,7 @@ namespace Aimmy2
 
             if (uiManager?.S_XOffset != null && uiManager?.S_XOffsetPercent != null)
             {
-                if (isMenuMinimized == false)
+                if (!isMenuMinimized)
                 {
                     uiManager.S_XOffset.Visibility = xPercentageAdjustment ? Visibility.Collapsed : Visibility.Visible;
                     uiManager.S_XOffsetPercent.Visibility = xPercentageAdjustment ? Visibility.Visible : Visibility.Collapsed;
@@ -940,7 +940,7 @@ namespace Aimmy2
 
             if (uiManager?.S_YOffset != null && uiManager?.S_YOffsetPercent != null)
             {
-                if (isMenuMinimized)
+                if (!isMenuMinimized)
                 {
                     uiManager.S_YOffset.Visibility = yPercentageAdjustment ? Visibility.Collapsed : Visibility.Visible;
                     uiManager.S_YOffsetPercent.Visibility = yPercentageAdjustment ? Visibility.Visible : Visibility.Collapsed;
