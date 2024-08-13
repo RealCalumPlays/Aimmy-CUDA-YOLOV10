@@ -163,10 +163,12 @@ namespace Aimmy2.AILogic
                 await Application.Current.Dispatcher.BeginInvoke(new Action(() => new NoticeBar($"Error starting the model via CUDA: {ex.Message}\n\nFalling back to DirectML, performance may be poor.", 5000).Show()));
                 try
                 {
+                    FileManager.LogError($"Error starting the model via CUDA: {ex}");
                     await LoadModelAsync(sessionOptions, modelPath, useCUDA: false);
                 }
                 catch (Exception e)
                 {
+                    FileManager.LogError($"Error starting the model via Tensorrt: {e}");
                     await Application.Current.Dispatcher.BeginInvoke(new Action(() => new NoticeBar($"Error starting the model via Tensorrt: {e.Message}, you won't be able to aim assist at all.", 5000).Show()));
                 }
             }
@@ -193,6 +195,7 @@ namespace Aimmy2.AILogic
             }
             catch (Exception ex)
             {
+                FileManager.LogError($"Error starting the model: {ex}");
                 await Application.Current.Dispatcher.BeginInvoke(new Action(() => new NoticeBar($"Error starting the model: {ex.Message}", 5000).Show()));
                 _onnxModel?.Dispose();
             }
@@ -218,6 +221,8 @@ namespace Aimmy2.AILogic
                         , 15000)
                     .Show()
                     ));
+
+                    FileManager.LogError("Output shape does not match the expected shape of 1x5x8400. This model will not work with Aimmy, please use an YOLOv8 model converted to ONNXv8.");
                 }
             }
         }
@@ -276,7 +281,7 @@ namespace Aimmy2.AILogic
                         double averageTime = totalTime / 1000.0;
                         //Debug.WriteLine($"Average loop iteration time: {averageTime} ms");
                         MessageBox.Show($"Average loop iteration time: {averageTime} ms", "Share this iteration time on our discord!");
-                        LogError($"Average loop iteration time: {averageTime} ms");
+                        FileManager.LogError($"Average loop iteration time: {averageTime} ms");
                         totalTime = 0;
                         iterationCount = 0;
                     }
@@ -659,7 +664,7 @@ namespace Aimmy2.AILogic
             }
             catch (Exception e)
             {
-                LogError("Error capturing screen:" + e);
+                FileManager.LogError("Error capturing screen:" + e);
                 return null;
             }
             return null;
@@ -695,11 +700,11 @@ namespace Aimmy2.AILogic
                 {
                     if (result == Vortice.DXGI.ResultCode.DeviceRemoved) // This usually happens when using closest to mouse 
                     {
-                        LogError("Device removed, reinitializing D3D11.");
+                        FileManager.LogError("Device removed, reinitializing D3D11.");
                         ReinitializeD3D11();
                         return null;
                     }
-                    LogError("Failed to acquire next frame: " + result);
+                    FileManager.LogError("Failed to acquire next frame: " + result);
                     ReinitializeD3D11();
                     return null;
                 }
@@ -779,24 +784,16 @@ namespace Aimmy2.AILogic
             }
             catch (SharpGenException ex)
             {
-                LogError("SharpGenException: " + ex);
+                FileManager.LogError("SharpGenException: " + ex);
                 return null;
             }
             catch (Exception e)
             {
-                LogError("Error capturing screen: " + e);
+                FileManager.LogError("Error capturing screen: " + e);
                 return null;
             }
         }
-        private void LogError(string message)
-        {
-            if (Dictionary.toggleState["Debug Mode"])
-            {
-                string logFilePath = "debug.txt";
-                using StreamWriter writer = new StreamWriter(logFilePath, true);
-                writer.WriteLine($"[{DateTime.Now}]: {message}");
-            }
-        }
+
         //private Bitmap? DeprecatedScreen(Rectangle detectionBox) // if for some reason they want to use the old method...
         //{
         //    if (_screenCaptureBitmap == null || _screenCaptureBitmap.Width != detectionBox.Width || _screenCaptureBitmap.Height != detectionBox.Height)

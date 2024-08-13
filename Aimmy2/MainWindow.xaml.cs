@@ -943,6 +943,7 @@ namespace Aimmy2
             }
             catch (Exception e)
             {
+                FileManager.LogError("Error loading store menu: " + e);
                 new NoticeBar(e.Message, 10000).Show();
                 return;
             }
@@ -1080,8 +1081,10 @@ namespace Aimmy2
                     uiManager.S_AIMinimumConfidence!.Slider.Value = MainWindow.GetValueOrDefault(Dictionary.sliderSettings, "AI Minimum Confidence", 50);
                 }
             }
-            catch (Exception e)
+            
+            catch(Exception e)
             {
+                FileManager.LogError("Error loading config " + e);
                 MessageBox.Show($"Error loading config, possibly outdated\n{e}");
             }
         }
@@ -1110,6 +1113,7 @@ namespace Aimmy2
                 }
                 catch (Exception e)
                 {
+                    FileManager.LogError("Error loading anti-recoil config: " + e);
                     throw new Exception($"Error loading config, possibly outdated\n{e}");
                 }
             }

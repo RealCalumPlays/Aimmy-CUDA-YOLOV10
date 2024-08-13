@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Other;
+using System.IO;
 using System.Net.Http;
 using System.Security.Principal;
 using System.Windows;
@@ -28,8 +29,9 @@ namespace MouseMovementLibraries.ddxoftSupport
                     new NoticeBar($"{ddxoftpath} has downloaded successfully, please re-select ddxoft Virtual Input Driver to load the DLL.", 4000).Show();
                 }
             }
-            catch
+            catch(Exception e)
             {
+                FileManager.LogError("Failed to download ddxoft.dll: " + e);
                 new NoticeBar($"{ddxoftpath} has failed to install, please try a different Mouse Movement Method.", 4000).Show();
             }
         }
@@ -60,6 +62,7 @@ namespace MouseMovementLibraries.ddxoftSupport
             }
             catch (Exception ex)
             {
+                FileManager.LogError("Failed to load ddxoft: " + ex);
                 MessageBox.Show("Failed to load ddxoft virtual input driver.\n\n" + ex.ToString(), "Aimmy");
                 return false;
             }
