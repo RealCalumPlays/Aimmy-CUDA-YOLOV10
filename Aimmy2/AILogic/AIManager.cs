@@ -251,7 +251,7 @@ namespace Aimmy2.AILogic
             Stopwatch stopwatch = new();
             DetectedPlayerWindow? DetectedPlayerOverlay = Dictionary.DetectedPlayerOverlay;
 
-            float scaleX = ScreenWidth / 640f;
+            float scaleX = ScreenWidth / 640f; // on new resolution you would need to restart the ailoop by loading new model or restarting the app
             float scaleY = ScreenHeight / 640f;
 
             stopwatch.Start();
@@ -426,6 +426,7 @@ namespace Aimmy2.AILogic
                 UpdateOverlay(DetectedPlayerOverlay!);
                 if (!Dictionary.toggleState["Aim Assist"]) return;
             }
+
 
             double YOffset = Dictionary.sliderSettings["Y Offset (Up/Down)"];
             double XOffset = Dictionary.sliderSettings["X Offset (Left/Right)"];
@@ -678,6 +679,8 @@ namespace Aimmy2.AILogic
 
             // Reinitialize Direct3D device and context
             InitializeDirect3D();
+            FileManager.LogError("Reinitialized D3D11, timing out for 1000ms");
+            Thread.Sleep(1000);
         }
         private Rectangle ClampRectangle(Rectangle rect, int screenWidth, int screenHeight)
         {
@@ -791,6 +794,10 @@ namespace Aimmy2.AILogic
             {
                 FileManager.LogError("Error capturing screen: " + e);
                 return null;
+            }
+            finally
+            {
+                _desktopImage?.Dispose();
             }
         }
 
