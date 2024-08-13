@@ -18,7 +18,9 @@ This is a fork of [Aimmy](https://github.com/Babyhamsta/Aimmy/), if any problems
 ## Setup (automatically)
 - Download and run LazyAimmySetupCuda ... thats it.
 Install from:
-[Dropbox](https://www.dropbox.com/scl/fi/tiu0xmyztj8mip6kwbduz/LazyCudaAimmySetup.exe?rlkey=1472ye0dq3vdu7qp9att2z2as&st=01biqlu3&dl=0) [4Shared](https://www.4shared.com/file/o2Ntd8aTku/LazyCudaAimmySetup__1_.html) [PixelDrain](https://pixeldrain.com/u/gKenQpHB)
+[Dropbox](https://www.dropbox.com/scl/fi/tiu0xmyztj8mip6kwbduz/LazyCudaAimmySetup.exe?rlkey=1472ye0dq3vdu7qp9att2z2as&st=01biqlu3&dl=0)
+[4Shared](https://www.4shared.com/file/o2Ntd8aTku/LazyCudaAimmySetup__1_.html)
+[PixelDrain](https://pixeldrain.com/u/gKenQpHB)
 
 
 ## Setup (manually)
