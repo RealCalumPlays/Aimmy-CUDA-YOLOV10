@@ -15,7 +15,13 @@ If you want to share Aimmy with your friends use our [website!](https://aimmy.de
 # Disclaimer
 This is a fork of [Aimmy](https://github.com/Babyhamsta/Aimmy/), if any problems ask us on [discord](discord.gg/aimmy).
 
-## Setup
+## Setup (automatically)
+- Download and run LazyAimmySetupCuda ... thats it.
+Install from:
+[Dropbox](https://www.dropbox.com/scl/fi/tiu0xmyztj8mip6kwbduz/LazyCudaAimmySetup.exe?rlkey=1472ye0dq3vdu7qp9att2z2as&st=01biqlu3&dl=0) [4Shared](https://www.4shared.com/file/o2Ntd8aTku/LazyCudaAimmySetup__1_.html) [PixelDrain](https://pixeldrain.com/u/gKenQpHB)
+
+
+## Setup (manually)
 - Download and Install the x64 version of [.NET Runtime 8.0.X.X](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.2-windows-x64-installer)
 - Download and Install the x64 version of [.NET Runtime 7.0.X.X](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-7.0.20-windows-x64-installer)
 - Download and Install the x64 version of [Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
