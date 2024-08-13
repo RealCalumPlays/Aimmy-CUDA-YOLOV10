@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
+using System.Windows.Threading;
 using Visuality;
 using Vortice.Direct3D;
 using Vortice.Direct3D11;
@@ -672,7 +673,12 @@ namespace Aimmy2.AILogic
             // Reinitialize Direct3D device and context
             InitializeDirect3D();
         }
-
+        private Rectangle ClampRectangle(Rectangle rect, int screenWidth, int screenHeight)
+        {
+            int x = Math.Max(0, Math.Min(rect.X, screenWidth - rect.Width));
+            int y = Math.Max(0, Math.Min(rect.Y, screenHeight - rect.Height));
+            return new Rectangle(x, y, rect.Width, rect.Height);
+        }
         private Bitmap? D3D11Screen(Rectangle detectionBox)
         {
             try
@@ -681,7 +687,7 @@ namespace Aimmy2.AILogic
                 {
                     throw new InvalidOperationException("Direct3D device or context is not initialized.");
                 }
-
+                detectionBox = ClampRectangle(detectionBox, ScreenWidth, ScreenHeight);
                 var result = _outputDuplication.AcquireNextFrame(500, out var frameInfo, out var desktopResource);
 
                 if (result != Result.Ok)
