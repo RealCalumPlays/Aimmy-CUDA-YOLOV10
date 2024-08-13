@@ -18,7 +18,7 @@ This is a fork of [Aimmy](https://github.com/Babyhamsta/Aimmy/), if any problems
 ## Setup (automatically)
 - Download and run LazyAimmySetupCuda ... thats it.
 
-### Install LazyAimmSetup
+### Install LazyAimmySetup
 
 [Dropbox](https://www.dropbox.com/scl/fi/tiu0xmyztj8mip6kwbduz/LazyCudaAimmySetup.exe?rlkey=1472ye0dq3vdu7qp9att2z2as&st=01biqlu3&dl=0)
 
