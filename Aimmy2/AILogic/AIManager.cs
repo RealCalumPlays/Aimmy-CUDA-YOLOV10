@@ -274,8 +274,9 @@ namespace Aimmy2.AILogic
                     if (Dictionary.toggleState["Debug Mode"])
                     {
                         double averageTime = totalTime / 1000.0;
-                        Debug.WriteLine($"Average loop iteration time: {averageTime} ms");
+                        //Debug.WriteLine($"Average loop iteration time: {averageTime} ms");
                         MessageBox.Show($"Average loop iteration time: {averageTime} ms", "Share this iteration time on our discord!");
+                        LogError($"Average loop iteration time: {averageTime} ms");
                         totalTime = 0;
                         iterationCount = 0;
                     }
@@ -658,7 +659,7 @@ namespace Aimmy2.AILogic
             }
             catch (Exception e)
             {
-                MessageBox.Show("Error capturing screen. " + e);
+                LogError("Error capturing screen:" + e);
                 return null;
             }
             return null;
@@ -694,9 +695,11 @@ namespace Aimmy2.AILogic
                 {
                     if (result == Vortice.DXGI.ResultCode.DeviceRemoved) // This usually happens when using closest to mouse 
                     {
+                        LogError("Device removed, reinitializing D3D11.");
                         ReinitializeD3D11();
                         return null;
                     }
+                    LogError("Failed to acquire next frame: " + result);
                     ReinitializeD3D11();
                     return null;
                 }
@@ -776,16 +779,24 @@ namespace Aimmy2.AILogic
             }
             catch (SharpGenException ex)
             {
-                Debug.WriteLine("SharpGenException: " + ex);
+                LogError("SharpGenException: " + ex);
                 return null;
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Error capturing screen. " + e);
+                LogError("Error capturing screen: " + e);
                 return null;
             }
         }
-
+        private void LogError(string message)
+        {
+            if (Dictionary.toggleState["Debug Mode"])
+            {
+                string logFilePath = "debug.txt";
+                using StreamWriter writer = new StreamWriter(logFilePath, true);
+                writer.WriteLine($"[{DateTime.Now}]: {message}");
+            }
+        }
         //private Bitmap? DeprecatedScreen(Rectangle detectionBox) // if for some reason they want to use the old method...
         //{
         //    if (_screenCaptureBitmap == null || _screenCaptureBitmap.Width != detectionBox.Width || _screenCaptureBitmap.Height != detectionBox.Height)
