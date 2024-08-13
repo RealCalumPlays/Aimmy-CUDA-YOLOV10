@@ -311,10 +311,16 @@ namespace Aimmy2.AILogic
 
         private async Task AutoTrigger()
         {
-            if (Dictionary.toggleState["Auto Trigger"] && (InputBindingManager.IsHoldingBinding("Aim Keybind") || Dictionary.toggleState["Constant AI Tracking"]))
+            if (Dictionary.toggleState["Auto Trigger"] &&
+                (InputBindingManager.IsHoldingBinding("Aim Keybind") ||
+                 InputBindingManager.IsHoldingBinding("Second Aim Keybind") ||
+                 Dictionary.toggleState["Constant AI Tracking"]))
             {
                 await MouseManager.DoTriggerClick();
-                if (!Dictionary.toggleState["Aim Assist"] && !Dictionary.toggleState["Show Detected Player"]) return;
+                if (!Dictionary.toggleState["Aim Assist"] && !Dictionary.toggleState["Show Detected Player"])
+                {
+                    return;
+                }
             }
         }
 
@@ -562,6 +568,10 @@ namespace Aimmy2.AILogic
 
             if (KDpoints.Count == 0 || KDPredictions.Count == 0)
             {
+                if (Dictionary.toggleState["Collect Data While Playing"] && !Dictionary.toggleState["Constant AI Tracking"] && !Dictionary.toggleState["Auto Label Data"])
+                {
+                    SaveFrame(frame);
+                } // Save images if the user wants to even if theres nothing detected
                 return null;
             }
 
@@ -578,15 +588,9 @@ namespace Aimmy2.AILogic
 
                 CenterXTranslated = nearestPrediction.CenterXTranslated;
                 CenterYTranslated = nearestPrediction.CenterYTranslated;
-
                 SaveFrame(frame, nearestPrediction);
                 return nearestPrediction;
             }
-            else if (Dictionary.toggleState["Collect Data While Playing"] && !Dictionary.toggleState["Constant AI Tracking"] && !Dictionary.toggleState["Auto Label Data"])
-            {
-                SaveFrame(frame);
-            }
-
             return null;
         }
 
@@ -658,12 +662,38 @@ namespace Aimmy2.AILogic
             }
             return null;
         }
+        private void ReinitializeD3D11()
+        {
+            // Release existing resources
+            _outputDuplication?.Dispose();
+            _device?.Dispose();
+            _deviceContext?.Dispose();
+
+            // Reinitialize Direct3D device and context
+            InitializeDirect3D();
+        }
 
         private Bitmap? D3D11Screen(Rectangle detectionBox)
         {
             try
             {
-                _outputDuplication.AcquireNextFrame(500, out var frameInfo, out var desktopResource);
+                if (_outputDuplication == null || _device == null || _deviceContext == null)
+                {
+                    throw new InvalidOperationException("Direct3D device or context is not initialized.");
+                }
+
+                var result = _outputDuplication.AcquireNextFrame(500, out var frameInfo, out var desktopResource);
+
+                if (result != Result.Ok)
+                {
+                    if (result == Vortice.DXGI.ResultCode.DeviceRemoved) // This usually happens when using closest to mouse 
+                    {
+                        ReinitializeD3D11();
+                        return null;
+                    }
+                    ReinitializeD3D11();
+                    return null;
+                }
 
                 using var screenTexture = desktopResource.QueryInterface<ID3D11Texture2D>();
 
@@ -738,6 +768,11 @@ namespace Aimmy2.AILogic
                 _outputDuplication.ReleaseFrame();
                 return _screenCaptureBitmap;
             }
+            catch (SharpGenException ex)
+            {
+                Debug.WriteLine("SharpGenException: " + ex);
+                return null;
+            }
             catch (Exception e)
             {
                 Debug.WriteLine("Error capturing screen. " + e);
@@ -772,7 +807,6 @@ namespace Aimmy2.AILogic
 
             string imagePath = Path.Combine("bin", "images", $"{uuid}.jpg");
             frame.Save(imagePath);
-
             if (Dictionary.toggleState["Auto Label Data"] && DoLabel != null)
             {
                 var labelPath = Path.Combine("bin", "labels", $"{uuid}.txt");
