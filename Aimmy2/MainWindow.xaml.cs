@@ -910,9 +910,9 @@ namespace Aimmy2
         private void LoadCreditsMenu()
         {
             AddTitle(CreditsPanel, "Developers");
+            AddCredit(CreditsPanel, "Taylor", "This Entire Repo");
             AddCredit(CreditsPanel, "Babyhamsta", "AI Logic");
             AddCredit(CreditsPanel, "MarsQQ", "Design");
-            AddCredit(CreditsPanel, "Taylor", "Optimization, Cleanup");
             AddSeparator(CreditsPanel);
 
             AddTitle(CreditsPanel, "Contributors");

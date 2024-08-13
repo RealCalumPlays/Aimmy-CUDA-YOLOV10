@@ -22,8 +22,9 @@ namespace Other
         {
             //Debug.WriteLine(Math.Abs(IndependentMousePress));
             IndependentMousePress += 1;
-            if (IndependentMousePress >= Dictionary.AntiRecoilSettings["Hold Time"])
+            if (IndependentMousePress >= Dictionary.AntiRecoilSettings["Hold Time"]){
                 MouseManager.DoAntiRecoil();
+            }
         }
     }
 }
