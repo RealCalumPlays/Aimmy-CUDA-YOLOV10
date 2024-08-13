@@ -69,7 +69,7 @@
                                           FillRule="NonZero" />
 						</Path.Data>
 					</Path>
-					<Label Content="Aimmy"
+					<Label Content="Aimmy CUDA"
                            HorizontalAlignment="Left"
                            Margin="45,0,0,0"
                            VerticalAlignment="Center"
@@ -511,7 +511,7 @@
                                    FontSize="15" />
 							<Label x:Name="AboutDesc"
                                    Foreground="White"
-                                   Content="v2.1.5"
+                                   Content="v2.1.7"
                                    FontFamily="{StaticResource Atkinson Hyperlegible}"
                                    VerticalContentAlignment="Center"
                                    Padding="0,0,0,0"
