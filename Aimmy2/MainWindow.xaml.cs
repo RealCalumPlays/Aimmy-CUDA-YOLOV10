@@ -102,7 +102,7 @@ namespace Aimmy2
             LoadDropdownStates();
 
             LoadMenuMinimizers();
-            //VisibilityXY();
+            VisibilityXY();
             PropertyChanger.ReceiveNewConfig = LoadConfig;
 
             ActualFOV = Dictionary.sliderSettings["FOV Size"];
@@ -119,35 +119,6 @@ namespace Aimmy2
         }
 
         private async void LoadStoreMenuAsync() => await LoadStoreMenu();
-        //private void VisibilityXY()
-        //{
-        //    // X/Y Percentage Adjustment Toggles
-        //    bool xPercentageAdjustment = Dictionary.toggleState["X Axis Percentage Adjustment"];
-        //    bool yPercentageAdjustment = Dictionary.toggleState["Y Axis Percentage Adjustment"];
-
-        //    Application.Current.Dispatcher.Invoke(() =>
-        //    {
-        //        if (uiManager?.S_XOffset != null)
-        //        {
-        //            uiManager.S_XOffset.Visibility = xPercentageAdjustment ? Visibility.Collapsed : Visibility.Visible;
-        //        }
-
-        //        if (uiManager?.S_XOffsetPercent != null)
-        //        {
-        //            uiManager.S_XOffsetPercent.Visibility = xPercentageAdjustment ? Visibility.Visible : Visibility.Collapsed;
-        //        }
-
-        //        if (uiManager?.S_YOffset != null)
-        //        {
-        //            uiManager.S_YOffset.Visibility = yPercentageAdjustment ? Visibility.Collapsed : Visibility.Visible;
-        //        }
-
-        //        if (uiManager?.S_YOffsetPercent != null)
-        //        {
-        //            uiManager.S_YOffsetPercent.Visibility = yPercentageAdjustment ? Visibility.Visible : Visibility.Collapsed;
-        //        }
-        //    });
-        //}
         private void Window_Loaded(object sender, RoutedEventArgs e) => AboutSpecs.Content = $"{GetProcessorName()} • {GetVideoControllerName()} • {GetFormattedMemorySize()}GB RAM";
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => DragMove();
@@ -346,11 +317,11 @@ namespace Aimmy2
                 case "Show AI Confidence":
                     DPWindow.DetectedPlayerConfidence.Visibility = Dictionary.toggleState[title] ? Visibility.Visible : Visibility.Collapsed;
                     break;
-                
+
                 case "Show FPS":
                     DPWindow.FpsLabel.Visibility = Dictionary.toggleState[title] ? Visibility.Visible : Visibility.Collapsed;
                     break;
-                
+
                 case "Mouse Background Effect":
                     if (!Dictionary.toggleState[title]) { RotaryGradient.Angle = 0; }
                     break;
@@ -362,12 +333,12 @@ namespace Aimmy2
                 case "EMA Smoothening":
                     MouseManager.IsEMASmoothingEnabled = Dictionary.toggleState[title];
                     break;
-                //case "X Axis Percentage Adjustment":
-                //    VisibilityXY();
-                //    break;
-                //case "Y Axis Percentage Adjustment":
-                //    VisibilityXY();
-                //    break;
+                case "X Axis Percentage Adjustment":
+                    VisibilityXY();
+                    break;
+                case "Y Axis Percentage Adjustment":
+                    VisibilityXY();
+                    break;
             }
         }
 
@@ -845,19 +816,11 @@ namespace Aimmy2
                     SelectMouseEvent();
                 }
             };
-            
-            //uiManager.DDI_ddxoft = AddDropdownItem(uiManager.D_MouseMovementMethod, "ddxoft Virtual Input Driver");
-            //uiManager.DDI_ddxoft.Selected += async (sender, e) =>
-            //{
-            //    if (!await DdxoftMain.Load())
-            //    {
-            //        SelectMouseEvent();
-            //    }
-            //};
-            
+
+
             //uiManager.D_ScreenCaptureMethod = AddDropdown(SettingsConfig, "Screen Capture Method");
             //AddDropdownItem(uiManager.D_ScreenCaptureMethod, "DirectX");
-            
+
             //AddDropdownItem(uiManager.D_ScreenCaptureMethod, "GDI+");
 
             uiManager.S_AIMinimumConfidence = AddSlider(SettingsConfig, "AI Minimum Confidence", "% Confidence", 1, 1, 1, 100);
@@ -877,34 +840,12 @@ namespace Aimmy2
 
             uiManager.AT_XYPercentageAdjustmentEnabler = AddTitle(XYPercentageEnablerMenu, "X/Y Percentage Adjustment", true);
             uiManager.T_XAxisPercentageAdjustment = AddToggle(XYPercentageEnablerMenu, "X Axis Percentage Adjustment");
-            uiManager.T_YAxisPercentageAdjustment = AddToggle(XYPercentageEnablerMenu, "Y Axis Percentage Adjustment"); 
+            uiManager.T_YAxisPercentageAdjustment = AddToggle(XYPercentageEnablerMenu, "Y Axis Percentage Adjustment");
 
-            //uiManager.T_XAxisPercentageAdjustment.Reader.Click += (s, e) =>
-            //{
-            //    bool isPercentageAdjustmentOn = Dictionary.toggleState["X Axis Percentage Adjustment"];
-            //    if (uiManager?.S_XOffset != null && uiManager?.S_XOffsetPercent != null)
-            //    {
-            //        uiManager.S_XOffset.Visibility = isPercentageAdjustmentOn ? Visibility.Collapsed : Visibility.Visible;
-            //        uiManager.S_XOffsetPercent.Visibility = isPercentageAdjustmentOn ? Visibility.Visible : Visibility.Collapsed;
-            //    }
-            //};
-
-            //uiManager.T_YAxisPercentageAdjustment.Reader.Click += (s, e) =>
-            //{
-            //    bool isPercentageAdjustmentOn = Dictionary.toggleState["Y Axis Percentage Adjustment"];
-            //    if (uiManager?.S_YOffset != null && uiManager?.S_YOffsetPercent != null)
-            //    {
-            //        uiManager.S_YOffset.Visibility = isPercentageAdjustmentOn ? Visibility.Collapsed : Visibility.Visible;
-            //        uiManager.S_YOffsetPercent.Visibility = isPercentageAdjustmentOn ? Visibility.Visible : Visibility.Collapsed;
-            //    }
-            //};
+            uiManager.T_XAxisPercentageAdjustment.Reader.Click += (s, e) => VisibilityXY();
+            uiManager.T_YAxisPercentageAdjustment.Reader.Click += (s, e) => VisibilityXY();
 
             AddSeparator(XYPercentageEnablerMenu);
-
-            // ddxoft Menu
-            //AddTitle(SSP2, "ddxoft Configurator");
-            //uiManager.AFL_ddxoftDLLLocator = AddFileLocator(SSP2, "ddxoft DLL Location", "ddxoft dll (*.dll)|*.dll");
-            //AddSeparator(SSP2);
         }
 
         private void LoadCreditsMenu()
@@ -980,10 +921,41 @@ namespace Aimmy2
         #endregion Menu Loading
 
         #region Menu Minizations
+        private void VisibilityXY()
+        {
+            bool isMenuMinimized = Dictionary.minimizeState["Aim Config"];
+
+            bool xPercentageAdjustment = Dictionary.toggleState["X Axis Percentage Adjustment"];
+            bool yPercentageAdjustment = Dictionary.toggleState["Y Axis Percentage Adjustment"];
+
+            if (uiManager?.S_XOffset != null && uiManager?.S_XOffsetPercent != null)
+            {
+                if (isMenuMinimized == false)
+                {
+                    uiManager.S_XOffset.Visibility = xPercentageAdjustment ? Visibility.Collapsed : Visibility.Visible;
+                    uiManager.S_XOffsetPercent.Visibility = xPercentageAdjustment ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+
+
+            if (uiManager?.S_YOffset != null && uiManager?.S_YOffsetPercent != null)
+            {
+                if (isMenuMinimized)
+                {
+                    uiManager.S_YOffset.Visibility = yPercentageAdjustment ? Visibility.Collapsed : Visibility.Visible;
+                    uiManager.S_YOffsetPercent.Visibility = yPercentageAdjustment ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+        }
 
         private void ToggleAimMenu() => SetMenuVisibility(AimAssist, !Dictionary.minimizeState["Aim Assist"]);
 
-        private void ToggleAimConfig() => SetMenuVisibility(AimConfig, !Dictionary.minimizeState["Aim Config"]);
+
+        private void ToggleAimConfig()
+        {
+            SetMenuVisibility(AimConfig, !Dictionary.minimizeState["Aim Config"]);
+            VisibilityXY();
+        }
 
         private void ToggleAutoTrigger() => SetMenuVisibility(TriggerBot, !Dictionary.minimizeState["Auto Trigger"]);
 
@@ -1043,6 +1015,7 @@ namespace Aimmy2
                     child.Visibility = Visibility.Visible;
                 }
             }
+
         }
 
         #endregion Menu Minizations
@@ -1081,8 +1054,8 @@ namespace Aimmy2
                     uiManager.S_AIMinimumConfidence!.Slider.Value = MainWindow.GetValueOrDefault(Dictionary.sliderSettings, "AI Minimum Confidence", 50);
                 }
             }
-            
-            catch(Exception e)
+
+            catch (Exception e)
             {
                 FileManager.LogError("Error loading config " + e);
                 MessageBox.Show($"Error loading config, possibly outdated\n{e}");
