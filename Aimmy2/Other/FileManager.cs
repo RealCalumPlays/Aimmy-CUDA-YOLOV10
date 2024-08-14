@@ -206,9 +206,9 @@ namespace Other
         }
         public static void LogError(string message)
         {
-            //if (Dictionary.toggleState["Debug Mode"])
+            if (Dictionary.toggleState["Debug Mode"])
             {
-                Debug.WriteLine(message);
+               // Debug.WriteLine(message);
                 string logFilePath = "debug.txt";
                 using StreamWriter writer = new StreamWriter(logFilePath, true);
                 writer.WriteLine($"[{DateTime.Now}]: {message}");
