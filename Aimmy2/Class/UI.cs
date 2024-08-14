@@ -21,9 +21,7 @@ namespace Class
 
         //Aim Config
         public ATitle? AT_AimConfig { get; set; }
-
         public ADropdown? D_PredictionMethod { get; set; }
-
         public ADropdown? D_DetectionAreaType { get; set; }
         public ComboBoxItem? DDI_ClosestToCenterScreen { get; set; }
         public ADropdown? D_AimingBoundariesAlignment { get; set; }
@@ -81,9 +79,8 @@ namespace Class
 
         // Player Detection
         public ATitle? AT_DetectedPlayer { get; set; }
-
         public AToggle? T_ShowDetectedPlayer { get; set; }
-
+        public AToggle? T_ShowFPS { get; set; }
         public AToggle? T_ShowAIConfidence { get; set; }
         public AToggle? T_ShowTracers { get; set; }
         public AColorChanger? CC_DetectedPlayerColor { get; set; }
@@ -97,15 +94,13 @@ namespace Class
         public AToggle? T_CollectDataWhilePlaying { get; set; }
         public AToggle? T_AutoLabelData { get; set; }
         public ADropdown? D_MouseMovementMethod { get; set; }
-        public ADropdown? D_ScreenCaptureMethod { get; set; }
+        public ADropdown? D_MonitorSelection { get; set; }
         public ComboBoxItem? DDI_LGHUB { get; set; }
         public ComboBoxItem? DDI_RazerSynapse { get; set; }
-        public ComboBoxItem? DDI_ddxoft { get; set; }
         public ASlider? S_AIMinimumConfidence { get; set; }
         public AToggle? T_MouseBackgroundEffect { get; set; }
         public AToggle? T_UITopMost { get; set; }
         public AToggle? T_DebugMode { get; set; }
-        public AToggle? T_ShowFPS { get; set; }
         public APButton? B_SaveConfig { get; set; }
         public APButton? B_Debug { get; set; }
 
@@ -113,11 +108,5 @@ namespace Class
         public ATitle? AT_XYPercentageAdjustmentEnabler { get; set; }
         public AToggle? T_XAxisPercentageAdjustment { get; set; }
         public AToggle? T_YAxisPercentageAdjustment { get; set; }
-
-        // ddxoft UI
-        //public AFileLocator? AFL_ddxoftDLLLocator { get; set; }
-
-        // Stores
-        public APButton? B_RepoManager { get; set; }
     }
 }

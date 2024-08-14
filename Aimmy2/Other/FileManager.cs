@@ -2,6 +2,7 @@
 using Aimmy2.Class;
 using Aimmy2.Other;
 using Class;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -205,8 +206,9 @@ namespace Other
         }
         public static void LogError(string message)
         {
-            if (Dictionary.toggleState["Debug Mode"])
+            //if (Dictionary.toggleState["Debug Mode"])
             {
+                Debug.WriteLine(message);
                 string logFilePath = "debug.txt";
                 using StreamWriter writer = new StreamWriter(logFilePath, true);
                 writer.WriteLine($"[{DateTime.Now}]: {message}");

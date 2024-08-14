@@ -15,7 +15,6 @@ namespace Aimmy2.Class
             { "Second Aim Keybind", "LMenu"},
             { "Dynamic FOV Keybind", "Left"},
             { "Emergency Stop Keybind", "Delete"},
-            { "Model Switch Keybind", "OemPipe"},
             { "Anti Recoil Keybind", "Left"},
             { "Disable Anti Recoil Keybind", "Oem6"},
             { "Gun 1 Key", "D1"},
@@ -50,7 +49,6 @@ namespace Aimmy2.Class
             { "Constant AI Tracking", false },
             { "Predictions", false },
             { "EMA Smoothening", false },
-            { "Enable Model Switch Keybind", true },
             { "Enable Gun Switching Keybind", false },
             { "Auto Trigger", false },
             { "Anti Recoil", false },
@@ -90,7 +88,8 @@ namespace Aimmy2.Class
             { "Detection Area Type", "Closest to Center Screen" },
             { "Aiming Boundaries Alignment", "Center" },
             { "Mouse Movement Method", "Mouse Event" },
-            { "Screen Capture Method", "DirectX"}
+            { "Screen Capture Method", "DirectX" },
+            { "Monitor Selection", "\\\\.\\DISPLAY1"}
         };
 
         public static Dictionary<string, dynamic> colorState = new()

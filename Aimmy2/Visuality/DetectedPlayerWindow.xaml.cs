@@ -1,6 +1,7 @@
 ﻿using Aimmy2.Class;
 using Class;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media;
 using Color = System.Windows.Media.Color;
@@ -40,7 +41,16 @@ namespace Visuality
             DetectedPlayerConfidence.Foreground = new SolidColorBrush(NewColor);
             DetectedTracers.Stroke = new SolidColorBrush(NewColor);
         }
+        public void MoveToMonitor(Screen selectedMonitor)
+        {
+            this.Left = selectedMonitor.Bounds.Left;
+            this.Top = selectedMonitor.Bounds.Top;
+            this.Width = selectedMonitor.Bounds.Width;
+            this.Height = selectedMonitor.Bounds.Height;
 
+            this.WindowState = WindowState.Maximized;
+            this.Topmost = true;
+        }
         private void UpdateDPFontSize(int newint) => DetectedPlayerConfidence.FontSize = newint;
 
         private void ChangeCornerRadius(int newint) => DetectedPlayerFocus.CornerRadius = new CornerRadius(newint);

@@ -1,3 +1,4 @@
+using Aimmy2.AILogic;
 using Aimmy2.Class;
 using Aimmy2.MouseMovementLibraries.GHubSupport;
 using Aimmy2.Other;
@@ -86,7 +87,6 @@ namespace Aimmy2
             bindingManager.SetupDefault("Second Aim Keybind", Dictionary.bindingSettings["Second Aim Keybind"]);
             bindingManager.SetupDefault("Dynamic FOV Keybind", Dictionary.bindingSettings["Dynamic FOV Keybind"]);
             bindingManager.SetupDefault("Emergency Stop Keybind", Dictionary.bindingSettings["Emergency Stop Keybind"]);
-            bindingManager.SetupDefault("Model Switch Keybind", Dictionary.bindingSettings["Model Switch Keybind"]);
 
             bindingManager.SetupDefault("Anti Recoil Keybind", Dictionary.bindingSettings["Anti Recoil Keybind"]);
             bindingManager.SetupDefault("Disable Anti Recoil Keybind", Dictionary.bindingSettings["Disable Anti Recoil Keybind"]);
@@ -260,7 +260,6 @@ namespace Aimmy2
                 "SendInput" => 1,
                 "LG HUB" => 2,
                 "Razer Synapse (Require Razer Peripheral)" => 3,
-                "ddxoft Virtual Input Driver" => 4,
                 _ => 0 // Default case if none of the above matches
             };
         }
@@ -380,23 +379,6 @@ namespace Aimmy2
             {
                 switch (bindingId)
                 {
-                    case "Model Switch Keybind":
-                        if (Dictionary.toggleState["Enable Model Switch Keybind"])
-                        {
-                            if (!FileManager.CurrentlyLoadingModel)
-                            {
-                                if (ModelListBox.SelectedIndex >= 0 && ModelListBox.SelectedIndex < (ModelListBox.Items.Count - 1))
-                                {
-                                    ModelListBox.SelectedIndex += 1;
-                                }
-                                else
-                                {
-                                    ModelListBox.SelectedIndex = 0;
-                                }
-                            }
-                        }
-                        break;
-
                     case "Dynamic FOV Keybind":
                         if (Dictionary.toggleState["Dynamic FOV"])
                         {
@@ -597,8 +579,6 @@ namespace Aimmy2
             uiManager.T_Predictions = AddToggle(AimAssist, "Predictions");
             uiManager.T_EMASmoothing = AddToggle(AimAssist, "EMA Smoothening");
             uiManager.C_EmergencyKeybind = AddKeyChanger(AimAssist, "Emergency Stop Keybind", Dictionary.bindingSettings["Emergency Stop Keybind"]);
-            uiManager.T_EnableModelSwitchKeybind = AddToggle(AimAssist, "Enable Model Switch Keybind");
-            uiManager.C_ModelSwitchKeybind = AddKeyChanger(AimAssist, "Model Switch Keybind", Dictionary.bindingSettings["Model Switch Keybind"]);
             AddSeparator(AimAssist);
 
             #endregion Aim Assist
@@ -817,6 +797,48 @@ namespace Aimmy2
                 }
             };
 
+            //uiManager.D_MonitorSelection = AddDropdown(SettingsConfig, "Monitor Selection");
+            
+            //var monitors = System.Windows.Forms.Screen.AllScreens;
+            //try
+            //{
+            //    foreach (var monitor in monitors)
+            //    {
+            //        string monitorName = $"Monitor {Array.IndexOf(System.Windows.Forms.Screen.AllScreens, monitor) + 1}: {monitor.Bounds.Width}x{monitor.Bounds.Height}";
+
+            //        AddDropdownItem(uiManager.D_MonitorSelection, monitorName);
+            //    }
+            //}
+            //catch(Exception e)
+            //{
+            //    FileManager.LogError("Error grabbing monitor list: " + e);
+            //}
+
+            //if(uiManager.D_MonitorSelection.DropdownBox.Items.Count > 0)
+            //{
+            //    uiManager.D_MonitorSelection.DropdownBox.SelectedIndex = 0;
+            //}
+            //uiManager.D_MonitorSelection.DropdownBox.SelectionChanged += (sender, args) =>
+            //{
+            //    try
+            //    {
+            //        var selectedMonitorIndex = uiManager.D_MonitorSelection.DropdownBox.SelectedIndex;
+
+            //        if (selectedMonitorIndex >= 0 && selectedMonitorIndex < monitors.Length)
+            //        {
+            //            // Update the monitor configuration in AIManager
+            //            FileManager.AIManager?.UpdateMonitorConfiguration();
+            //        }
+            //        else
+            //        {
+            //            FileManager.LogError("Selected monitor index is out of range.");
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        FileManager.LogError($"Error handling monitor selection change: {ex}");
+            //    }
+            //};
 
             //uiManager.D_ScreenCaptureMethod = AddDropdown(SettingsConfig, "Screen Capture Method");
             //AddDropdownItem(uiManager.D_ScreenCaptureMethod, "DirectX");
@@ -1185,5 +1207,6 @@ namespace Aimmy2
         }
 
         #endregion Window Handling
+
     }
 }
