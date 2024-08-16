@@ -20,11 +20,11 @@ This is a fork of [Aimmy](https://github.com/Babyhamsta/Aimmy/), if any problems
 
 ### Install LazyAimmySetup
 
-[Dropbox](https://www.dropbox.com/scl/fi/tiu0xmyztj8mip6kwbduz/LazyCudaAimmySetup.exe?rlkey=1472ye0dq3vdu7qp9att2z2as&st=01biqlu3&dl=0)
+[Dropbox](https://www.dropbox.com/scl/fi/71q6i4tobemhcrnh7grg9/LazyAimmysetup-cuda.exe?rlkey=glk14p4defjo5tb8rxwpw735c&st=f3l306co&dl=0)
 
-[4Shared](https://www.4shared.com/file/o2Ntd8aTku/LazyCudaAimmySetup__1_.html)
+[4Shared](https://www.4shared.com/file/BLgGbPR8jq/LazyAimmysetup_cuda.html)
 
-[PixelDrain](https://pixeldrain.com/u/gKenQpHB)
+[PixelDrain](https://pixeldrain.com/u/UytUP5hV)
 
 
 ## Setup (manually)
