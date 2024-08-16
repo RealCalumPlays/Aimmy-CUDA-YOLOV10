@@ -4,6 +4,7 @@ using Class;
 using InputLogic;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
+using Microsoft.Win32;
 using Other;
 using SharpGen.Runtime;
 using Supercluster.KDTree;
@@ -99,6 +100,11 @@ namespace Aimmy2.AILogic
                 ExecutionMode = ExecutionMode.ORT_PARALLEL
             };
 
+            SystemEvents.DisplaySettingsChanged += (s, e) =>
+            {
+                ReinitializeD3D11();
+            };
+
             InitializeCaptureMethod();
             // Attempt to load via CUDA (else fallback to CPU)
             Task.Run(() => InitializeModel(sessionOptions, modelPath));
@@ -128,19 +134,28 @@ namespace Aimmy2.AILogic
                 DisposeD311();
                 // Initialize Direct3D11 device and context
                 FeatureLevel[] featureLevels = { FeatureLevel.Level_11_0, FeatureLevel.Level_11_1 };
-                D3D11.D3D11CreateDevice(null, DriverType.Hardware, DeviceCreationFlags.BgraSupport, featureLevels, out _device, out _context);
+                var result = D3D11.D3D11CreateDevice(
+                    null,
+                    DriverType.Hardware,
+                    DeviceCreationFlags.BgraSupport,
+                    featureLevels,
+                    out _device,
+                    out _context
+                );
 
-                if (_device == null || _context == null)
+                if (result != Result.Ok || _device == null || _context == null)
                 {
-                    throw new InvalidOperationException("Failed to create Direct3D11 device or context.");
+                    throw new InvalidOperationException($"Failed to create Direct3D11 device or context. HRESULT: {result}");
                 }
 
                 using var dxgiDevice = _device.QueryInterface<IDXGIDevice>();
                 using var adapterForOutput = dxgiDevice.GetAdapter();
-                if (adapterForOutput.EnumOutputs(0, out var outputTemp) != Result.Ok)
+                var resultEnum = adapterForOutput.EnumOutputs(0, out var outputTemp);
+                if (resultEnum != Result.Ok || outputTemp == null)
                 {
                     throw new InvalidOperationException("Failed to enumerate outputs.");
                 }
+
 
                 using var output = outputTemp.QueryInterface<IDXGIOutput1>();
 
@@ -263,12 +278,10 @@ namespace Aimmy2.AILogic
             Stopwatch stopwatch = new();
             DetectedPlayerWindow? DetectedPlayerOverlay = Dictionary.DetectedPlayerOverlay;
 
-            float scaleX = ScreenWidth / 640f; // on new resolution you would need to restart the ailoop by loading new model or restarting the app
-            float scaleY = ScreenHeight / 640f;
-
             stopwatch.Start();
             while (_isAiLoopRunning)
             {
+
                 if (Dictionary.toggleState["Show FPS"])
                 {
                     double frameTime = stopwatch.Elapsed.TotalSeconds;
@@ -299,6 +312,8 @@ namespace Aimmy2.AILogic
                     }
                 }
 
+                float scaleX = ScreenWidth / 640f; // on new resolution you would need to restart the ailoop by loading new model or restarting the app
+                float scaleY = ScreenHeight / 640f;
                 if (ShouldProcess())
                 {
                     if (ShouldPredict())
@@ -575,7 +590,7 @@ namespace Aimmy2.AILogic
             Rectangle detectionBox = new(targetX - IMAGE_SIZE / 2, targetY - IMAGE_SIZE / 2, IMAGE_SIZE, IMAGE_SIZE);
 
             detectionBox = ClampRectangle(detectionBox, ScreenWidth, ScreenHeight);
-            
+
             Bitmap? frame = ScreenGrab(detectionBox);
             if (frame == null) return null;
 
@@ -777,7 +792,7 @@ namespace Aimmy2.AILogic
             }
             catch (Exception e)
             {
-                FileManager.LogError("Error capturing screen:" + e); 
+                FileManager.LogError("Error capturing screen:" + e);
                 return null;
             }
         }
@@ -807,10 +822,17 @@ namespace Aimmy2.AILogic
         #region Reinitialization, Clamping, Misc
         private void ReinitializeD3D11()
         {
-            DisposeD311();
-            InitializeDirect3D11();
-            Thread.Sleep(1000);
-            FileManager.LogError("Reinitializing D3D11, timing out for 1000ms");
+            try
+            {
+                DisposeD311();
+                InitializeDirect3D11();
+                FileManager.LogError("Reinitializing D3D11, timing out for 1000ms");
+                Thread.Sleep(1000);
+            }
+            catch (Exception ex)
+            {
+                FileManager.LogError("Error during D3D11 reinitialization: " + ex);
+            }
         }
         #endregion
         #endregion Screen Capture
@@ -887,9 +909,18 @@ namespace Aimmy2.AILogic
         }
         private void DisposeD311()
         {
-            _desktopImage?.Dispose();
-            _context?.Dispose();
-            _device?.Dispose();
+            if(_desktopImage != null) _desktopImage?.Dispose();
+            
+            if(_outputDuplication != null) _outputDuplication?.Dispose();
+            
+            if(_context != null) _context?.Dispose();
+            
+            if(_device != null) _device?.Dispose();
+
+            _desktopImage = null;
+            _context = null;
+            _device = null;
+            _outputDuplication = null;
         }
         private void DisposeResources()
         {
