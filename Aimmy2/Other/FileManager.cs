@@ -7,7 +7,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using Visuality;
-using static Aimmy2.Other.GithubManager;
 
 namespace Other
 {
@@ -208,7 +207,7 @@ namespace Other
         {
             if (Dictionary.toggleState["Debug Mode"])
             {
-               // Debug.WriteLine(message);
+               //Debug.WriteLine(message);
                 string logFilePath = "debug.txt";
                 using StreamWriter writer = new StreamWriter(logFilePath, true);
                 writer.WriteLine($"[{DateTime.Now}]: {message}");

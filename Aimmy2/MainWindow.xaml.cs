@@ -1,4 +1,3 @@
-using Aimmy2.AILogic;
 using Aimmy2.Class;
 using Aimmy2.MouseMovementLibraries.GHubSupport;
 using Aimmy2.Other;
@@ -262,6 +261,18 @@ namespace Aimmy2
                 "Razer Synapse (Require Razer Peripheral)" => 3,
                 _ => 0 // Default case if none of the above matches
             };
+            //if (Dictionary.dropdownState.TryGetValue("Monitor Selection", out var monitorSelection) && monitorSelection != null)
+            //{
+            //    var monitorIndex = Array.FindIndex(System.Windows.Forms.Screen.AllScreens,
+            //                                       screen => monitorSelection.Contains($"{screen.Bounds.Width}x{screen.Bounds.Height}"));
+
+            //    uiManager.D_MonitorSelection!.DropdownBox.SelectedIndex = monitorIndex >= 0 ? monitorIndex : 0;
+            //}
+            //else
+            //{
+            //    uiManager.D_MonitorSelection!.DropdownBox.SelectedIndex = 0;
+            //}
+
         }
 
         private AToggle AddToggle(StackPanel panel, string title)
@@ -598,9 +609,9 @@ namespace Aimmy2
             {
                 await Task.Delay(100);
                 await System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
-                FOVWindow.FOVStrictEnclosure.Margin = new Thickness(
-                Convert.ToInt16((WinAPICaller.ScreenWidth / 2) / WinAPICaller.scalingFactorX) - 320,
-                Convert.ToInt16((WinAPICaller.ScreenHeight / 2) / WinAPICaller.scalingFactorY) - 320,
+                    FOVWindow.FOVStrictEnclosure.Margin = new Thickness(
+                    Convert.ToInt16((WinAPICaller.ScreenWidth / 2) / WinAPICaller.scalingFactorX) - 320,
+                    Convert.ToInt16((WinAPICaller.ScreenHeight / 2) / WinAPICaller.scalingFactorY) - 320,
                 0, 0));
             };
 
@@ -798,7 +809,7 @@ namespace Aimmy2
             };
 
             //uiManager.D_MonitorSelection = AddDropdown(SettingsConfig, "Monitor Selection");
-            
+
             //var monitors = System.Windows.Forms.Screen.AllScreens;
             //try
             //{
@@ -809,12 +820,12 @@ namespace Aimmy2
             //        AddDropdownItem(uiManager.D_MonitorSelection, monitorName);
             //    }
             //}
-            //catch(Exception e)
+            //catch (Exception e)
             //{
             //    FileManager.LogError("Error grabbing monitor list: " + e);
             //}
 
-            //if(uiManager.D_MonitorSelection.DropdownBox.Items.Count > 0)
+            //if (uiManager.D_MonitorSelection.DropdownBox.Items.Count > 0)
             //{
             //    uiManager.D_MonitorSelection.DropdownBox.SelectedIndex = 0;
             //}

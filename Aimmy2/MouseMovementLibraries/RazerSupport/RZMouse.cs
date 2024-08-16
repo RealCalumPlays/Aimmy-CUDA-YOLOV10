@@ -159,6 +159,11 @@ namespace MouseMovementLibraries.RazerSupport
             {
                 return init();
             }
+            catch (DllNotFoundException dllEx)
+            {
+                MessageBox.Show($"DLL loading error: {dllEx}\nEnsure {rzctlpath} is present and correctly loaded.", "Aimmy");
+                return false;
+            }
             catch (Exception ex)
             {
                 MessageBox.Show($"Unfortunately, Razer Synapse mode cannot be ran sufficiently.\n{ex}", "Aimmy");

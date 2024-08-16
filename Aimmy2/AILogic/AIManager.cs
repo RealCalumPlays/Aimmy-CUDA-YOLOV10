@@ -12,7 +12,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
-using System.Windows.Forms;
 using Visuality;
 using Vortice.Direct3D;
 using Vortice.Direct3D11;
@@ -36,11 +35,11 @@ namespace Aimmy2.AILogic
         private KalmanPrediction kalmanPrediction;
         private WiseTheFoxPrediction wtfpredictionManager;
 
-        private Bitmap? _screenCaptureBitmap;
+        //private Bitmap? _screenCaptureBitmap;
 
         //Direct3D Variables
         private ID3D11Device _device;
-        private ID3D11DeviceContext _deviceContext;
+        private ID3D11DeviceContext _context;
         private IDXGIOutputDuplication _outputDuplication;
         private ID3D11Texture2D _desktopImage;
 
@@ -110,10 +109,10 @@ namespace Aimmy2.AILogic
             switch (Dictionary.dropdownState["Screen Capture Method"])
             {
                 case "DirectX":
-                    string monitorSelection = Dictionary.dropdownState["Monitor Selection"];
-                    Screen selectedMonitor = GetSelectedMonitor(monitorSelection);
+                    //string monitorSelection = Dictionary.dropdownState["Monitor Selection"];
+                    //Screen selectedMonitor = GetSelectedMonitor(monitorSelection);
 
-                    Task.Run(() => InitializeDirect3D(selectedMonitor));
+                    Task.Run(() => InitializeDirect3D11());
                     break;
                 case "GDI+": // This wont work at all... for now.
                     //InitializeDefault();
@@ -122,63 +121,43 @@ namespace Aimmy2.AILogic
                     throw new ArgumentOutOfRangeException();
             }
         }
-
-        private void InitializeDirect3D() //Screen selectedMonitor
+        private void InitializeDirect3D11()
         {
-            FeatureLevel[] featureLevels = { FeatureLevel.Level_11_0 };
-
-            //using var dxgiFactory = DXGI.CreateDXGIFactory1<IDXGIFactory1>();
-            //// Get the correct adapter for the selected monitor
-            //IDXGIAdapter1 selectedAdapter = null;
-
-            //for (int i = 0; dxgiFactory.EnumAdapters1(i, out IDXGIAdapter1 adapter).Success; i++)
-            //{
-            //    for (int j = 0; adapter.EnumOutputs(j, out IDXGIOutput tempOutput).Success; j++)
-            //    {
-            //        var output1 = tempOutput.QueryInterface<IDXGIOutput1>();
-            //        var desc = output1.Description;
-
-            //        // Match the adapter output to the selected monitor's DeviceName
-            //        if (desc.DeviceName == selectedMonitor.DeviceName)
-            //        {
-            //            selectedAdapter = adapter;
-            //            break;
-            //        }
-            //    }
-
-            //    if (selectedAdapter != null)
-            //        break;
-            //}
-
-            //if (selectedAdapter == null)
-            //{
-            //    throw new InvalidOperationException("Could not find the adapter for the selected monitor.");
-            //}
-
-            D3D11.D3D11CreateDevice(
-                null,  
-                DriverType.Unknown,
-                DeviceCreationFlags.BgraSupport,
-                featureLevels,
-                out _device,
-                out _deviceContext);
-
-            using var dxgiDevice = _device.QueryInterface<IDXGIDevice>();
-            using var adapterForOutput = dxgiDevice.GetAdapter();
-            if (adapterForOutput.EnumOutputs(0, out var outputTemp) != Result.Ok)
+            try
             {
-                throw new InvalidOperationException("Failed to enumerate outputs.");
+                DisposeD311();
+                // Initialize Direct3D11 device and context
+                FeatureLevel[] featureLevels = { FeatureLevel.Level_11_0, FeatureLevel.Level_11_1 };
+                D3D11.D3D11CreateDevice(null, DriverType.Hardware, DeviceCreationFlags.BgraSupport, featureLevels, out _device, out _context);
+
+                if (_device == null || _context == null)
+                {
+                    throw new InvalidOperationException("Failed to create Direct3D11 device or context.");
+                }
+
+                using var dxgiDevice = _device.QueryInterface<IDXGIDevice>();
+                using var adapterForOutput = dxgiDevice.GetAdapter();
+                if (adapterForOutput.EnumOutputs(0, out var outputTemp) != Result.Ok)
+                {
+                    throw new InvalidOperationException("Failed to enumerate outputs.");
+                }
+
+                using var output = outputTemp.QueryInterface<IDXGIOutput1>();
+
+                if (output == null)
+                {
+                    throw new InvalidOperationException("Failed to acquire IDXGIOutput1.");
+                }
+
+                // Duplicate the output
+                _outputDuplication = output.DuplicateOutput(_device);
+
+                FileManager.LogError("Direct3D11 device, context, and output duplication initialized.");
             }
-
-            using var output = outputTemp.QueryInterface<IDXGIOutput1>();
-
-            if (output == null)
+            catch (Exception ex)
             {
-                throw new InvalidOperationException("Failed to acquire IDXGIOutput1.");
+                FileManager.LogError("Error initializing Direct3D11: " + ex);
             }
-
-            // Duplicate the output
-            _outputDuplication = output.DuplicateOutput(_device);
         }
 
 
@@ -216,8 +195,8 @@ namespace Aimmy2.AILogic
                 if (useCUDA) { sessionOptions.AppendExecutionProvider_CUDA(); } // Using GPU 0, task manager will tell you which GPU is which (0,1,2, etc) in the "Performance" tab
                 else
                 {
-                    sessionOptions.AppendExecutionProvider_Tensorrt();
-                    await Application.Current.Dispatcher.BeginInvoke(new Action(() => new NoticeBar("Starting model with tensorrt...", 2000)));
+                    sessionOptions.AppendExecutionProvider_CPU();
+                    await Application.Current.Dispatcher.BeginInvoke(new Action(() => new NoticeBar("Starting model with CPU...", 2000)));
                 }
 
                 _onnxModel = new InferenceSession(modelPath, sessionOptions);
@@ -346,9 +325,9 @@ namespace Aimmy2.AILogic
             }
             stopwatch.Stop();
         }
-
+        #endregion
         #region AI Loop Functions
-
+        #region misc
         private async Task AutoTrigger()
         {
             if (Dictionary.toggleState["Auto Trigger"] &&
@@ -372,6 +351,7 @@ namespace Aimmy2.AILogic
                 if (Dictionary.FOVWindow != null) await Application.Current.Dispatcher.BeginInvoke(() => Dictionary.FOVWindow.FOVStrictEnclosure.Margin = new Thickness(Convert.ToInt16(mousePosition.X / WinAPICaller.scalingFactorX) - 320, Convert.ToInt16(mousePosition.Y / WinAPICaller.scalingFactorY) - 320, 0, 0));
             }
         }
+        #endregion
         #region ESP
         private static void DisableOverlay(DetectedPlayerWindow DetectedPlayerOverlay)
         {
@@ -576,6 +556,15 @@ namespace Aimmy2.AILogic
         }
         #endregion
         #region Prediction (AI Work)
+        private Rectangle ClampRectangle(Rectangle rect, int screenWidth, int screenHeight)
+        {
+            int x = Math.Max(0, Math.Min(rect.X, screenWidth - rect.Width));
+            int y = Math.Max(0, Math.Min(rect.Y, screenHeight - rect.Height));
+            int width = Math.Min(rect.Width, screenWidth - x);
+            int height = Math.Min(rect.Height, screenHeight - y);
+
+            return new Rectangle(x, y, width, height);
+        }
         private async Task<Prediction?> GetClosestPrediction(bool useMousePosition = true)
         {
             var cursorPosition = WinAPICaller.GetCursorPosition();
@@ -585,6 +574,8 @@ namespace Aimmy2.AILogic
 
             Rectangle detectionBox = new(targetX - IMAGE_SIZE / 2, targetY - IMAGE_SIZE / 2, IMAGE_SIZE, IMAGE_SIZE);
 
+            detectionBox = ClampRectangle(detectionBox, ScreenWidth, ScreenHeight);
+            
             Bitmap? frame = ScreenGrab(detectionBox);
             if (frame == null) return null;
 
@@ -680,68 +671,56 @@ namespace Aimmy2.AILogic
         #endregion
         #endregion AI Loop Functions
 
-        #endregion AI
-
         #region Screen Capture
         public Bitmap? ScreenGrab(Rectangle detectionBox)
         {
             try
             {
-                if (Dictionary.dropdownState["Screen Capture Method"] == "DirectX")
-                {
-                    return D3D11Screen(detectionBox);
-                }
-                //else if (Dictionary.dropdownState["Screen Capture Method"] == "GDI+")
-                //{
-                //    return DeprecatedScreen(detectionBox);
-                //}
+                Bitmap? frame = D3D11Screen(detectionBox);
+                return frame;
+
             }
             catch (Exception e)
             {
                 FileManager.LogError("Error capturing screen:" + e);
                 return null;
             }
-            return null;
         }
         private Bitmap? D3D11Screen(Rectangle detectionBox)
         {
             try
             {
-                if (_outputDuplication == null || _device == null || _deviceContext == null)
+                if (_device == null || _context == null | _outputDuplication == null)
                 {
-                    throw new InvalidOperationException("Direct3D device or context is not initialized.");
+                    FileManager.LogError("Device, context, or textures are null.");
+                    throw new InvalidOperationException("Device, context, or textures are null.");
                 }
-                detectionBox = ClampRectangle(detectionBox, ScreenWidth, ScreenHeight);
+
                 var result = _outputDuplication.AcquireNextFrame(500, out var frameInfo, out var desktopResource);
 
                 if (result != Result.Ok)
                 {
-                    if (result == Vortice.DXGI.ResultCode.DeviceRemoved) // This usually happens when using closest to mouse 
+                    if (result == Vortice.DXGI.ResultCode.DeviceRemoved)
                     {
                         FileManager.LogError("Device removed, reinitializing D3D11.");
-
                         ReinitializeD3D11();
                         return null;
                     }
-                    FileManager.LogError("Failed to acquire next frame: " + result);
                     ReinitializeD3D11();
+                    FileManager.LogError("Failed to acquire next frame: " + result);
                     return null;
                 }
 
                 using var screenTexture = desktopResource.QueryInterface<ID3D11Texture2D>();
 
-                bool requiresNewResources = _screenCaptureBitmap == null || _desktopImage == null
-                                            || _screenCaptureBitmap.Width != detectionBox.Width
-                                            || _screenCaptureBitmap.Height != detectionBox.Height;
+                bool requiresNewResources = _desktopImage == null || _desktopImage.Description.Width != detectionBox.Width || _desktopImage.Description.Height != detectionBox.Height;
 
                 if (requiresNewResources)
                 {
-                    _screenCaptureBitmap?.Dispose();
                     _desktopImage?.Dispose();
 
                     var desc = new Texture2DDescription
                     {
-                        BindFlags = BindFlags.None,
                         Width = detectionBox.Width,
                         Height = detectionBox.Height,
                         MipLevels = 1,
@@ -750,13 +729,11 @@ namespace Aimmy2.AILogic
                         SampleDescription = new SampleDescription(1, 0),
                         Usage = ResourceUsage.Staging,
                         CPUAccessFlags = CpuAccessFlags.Read,
-                        MiscFlags = ResourceOptionFlags.None
+                        BindFlags = BindFlags.None
                     };
 
                     _desktopImage = _device.CreateTexture2D(desc);
-                    _screenCaptureBitmap = new Bitmap(_desktopImage.Description.Width, _desktopImage.Description.Height, PixelFormat.Format32bppArgb);
                 }
-
                 var box = new Box
                 {
                     Left = detectionBox.Left,
@@ -767,45 +744,31 @@ namespace Aimmy2.AILogic
                     Back = 1
                 };
 
-                _deviceContext.CopySubresourceRegion(_desktopImage, 0, 0, 0, 0, screenTexture, 0, box);
+                _context.CopySubresourceRegion(_desktopImage, 0, 0, 0, 0, screenTexture, 0, box);
 
                 if (_desktopImage == null) return null;
-                var dataBox = _deviceContext.Map(_desktopImage, 0, MapMode.Read, Vortice.Direct3D11.MapFlags.None);
+                var map = _context.Map(_desktopImage, 0, MapMode.Read, Vortice.Direct3D11.MapFlags.None);
 
-                if (_screenCaptureBitmap == null) return null;
-                var boundsRect = new Rectangle(0, 0, _screenCaptureBitmap.Width, _screenCaptureBitmap.Height);
-                var mapDest = _screenCaptureBitmap.LockBits(boundsRect, ImageLockMode.WriteOnly, _screenCaptureBitmap.PixelFormat);
+                var bitmap = new Bitmap(detectionBox.Width, detectionBox.Height, PixelFormat.Format32bppArgb);
+                var boundsRect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+                var mapDest = bitmap.LockBits(boundsRect, ImageLockMode.WriteOnly, bitmap.PixelFormat);
 
                 unsafe
                 {
-
-                    var sourcePtr = (byte*)dataBox.DataPointer;
+                    var sourcePtr = (byte*)map.DataPointer;
                     var destPtr = (byte*)mapDest.Scan0;
-
-                    int rowPitch = dataBox.RowPitch;
+                    int rowPitch = map.RowPitch;
                     int destStride = mapDest.Stride;
                     int widthInBytes = detectionBox.Width * 4;
 
-                    //Copy Pixel data
-                    Parallel.For(0, detectionBox.Height, y =>
-                    {
-                        byte* src = sourcePtr + y * rowPitch;
-                        byte* dest = destPtr + y * destStride;
-                        Buffer.MemoryCopy(src, dest, widthInBytes, widthInBytes);
-                    });
+                    Buffer.MemoryCopy(sourcePtr, destPtr, widthInBytes * detectionBox.Height, widthInBytes * detectionBox.Height);
                 }
-
-                if (mapDest == null)
-                {
-                    throw new ArgumentNullException(nameof(mapDest), "BitmapData cannot be null.");
-                }
-
-                _screenCaptureBitmap.UnlockBits(mapDest);
-                _deviceContext.Unmap(_desktopImage, 0);
+                bitmap.UnlockBits(mapDest);
+                _context.Unmap(_desktopImage, 0);
                 _outputDuplication.ReleaseFrame();
-
-                return _screenCaptureBitmap;
+                return bitmap;
             }
+
             catch (SharpGenException ex)
             {
                 FileManager.LogError("SharpGenException: " + ex);
@@ -814,27 +777,10 @@ namespace Aimmy2.AILogic
             }
             catch (Exception e)
             {
-                FileManager.LogError("Error capturing screen: " + e);
+                FileManager.LogError("Error capturing screen:" + e); 
                 return null;
             }
         }
-
-        //private Bitmap? DeprecatedScreen(Rectangle detectionBox) // if for some reason they want to use the old method...
-        //{
-        //    if (_screenCaptureBitmap == null || _screenCaptureBitmap.Width != detectionBox.Width || _screenCaptureBitmap.Height != detectionBox.Height)
-        //    {
-        //        _screenCaptureBitmap?.Dispose();
-        //        _graphics?.Dispose();
-
-        //        _screenCaptureBitmap = new Bitmap(detectionBox.Width, detectionBox.Height, PixelFormat.Format24bppRgb);
-        //        _graphics = Graphics.FromImage(_screenCaptureBitmap);
-        //    }
-
-        //    _graphics?.CopyFromScreen(detectionBox.Left, detectionBox.Top, 0, 0, detectionBox.Size, CopyPixelOperation.SourceCopy);
-
-        //    return _screenCaptureBitmap;
-        //}
-
         private void SaveFrame(Bitmap frame, Prediction? DoLabel = null)
         {
             if (!Dictionary.toggleState["Collect Data While Playing"]) return;
@@ -859,79 +805,12 @@ namespace Aimmy2.AILogic
             }
         }
         #region Reinitialization, Clamping, Misc
-        //public void UpdateMonitorConfiguration()
-        //{
-        //    string monitorSelection = Dictionary.dropdownState["Monitor Selection"];
-        //    Screen selectedMonitor = GetSelectedMonitor(monitorSelection);
-
-        //    ScreenWidth = selectedMonitor.Bounds.Width;
-        //    ScreenHeight = selectedMonitor.Bounds.Height;
-
-        //    DetectedPlayerWindow? DetectedPlayerOverlay = Dictionary.DetectedPlayerOverlay;
-        //    FOV? FOVWindow = Dictionary.FOVWindow;
-        //    if (FOVWindow != null) FOVWindow.MoveToMonitor(selectedMonitor);
-        //    if (DetectedPlayerOverlay != null) DetectedPlayerOverlay.MoveToMonitor(selectedMonitor);
-
-        //    try
-        //    {
-        //        ReinitializeD3D11();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        FileManager.LogError($"Error updating monitor configuration: {ex}");
-        //    }
-        //}
         private void ReinitializeD3D11()
         {
-            // Release existing resources
             DisposeD311();
-
-            //string monitorSelection = Dictionary.dropdownState["Monitor Selection"];
-            //Screen selectedMonitor = GetSelectedMonitor(monitorSelection);
-
-            //if (selectedMonitor == null)
-            //{
-            //    FileManager.LogError("Selected monitor is null during reinitialization.");
-            //    return;
-            //}
-
-            // Reinitialize Direct3D device and context
-            InitializeDirect3D();
-            FileManager.LogError("Reinitialized D3D11, timing out for 1000ms");
+            InitializeDirect3D11();
             Thread.Sleep(1000);
-        }
-
-        //private Screen GetSelectedMonitor(string monitorSelection)
-        //{
-        //    try
-        //    {
-        //        // Parse the monitor index from the selection string (e.g., "Monitor 1: 1920x1080")
-        //        var monitorIndex = int.Parse(monitorSelection.Split(' ')[1].TrimEnd(':')) - 1;
-
-        //        if (monitorIndex >= 0 && monitorIndex < Screen.AllScreens.Length)
-        //        {
-        //            Screen selectedMonitor = Screen.AllScreens[monitorIndex];
-        //            // Log monitor details for verification
-        //            FileManager.LogError($"Selected monitor: {selectedMonitor.DeviceName}, {selectedMonitor.Bounds}");
-        //            return selectedMonitor;
-        //        }
-
-        //        throw new ArgumentOutOfRangeException("Monitor index is out of range.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        FileManager.LogError($"Error getting selected monitor: {ex}");
-        //        throw;
-        //    }
-        //}
-
-        private Rectangle ClampRectangle(Rectangle rect, int screenWidth, int screenHeight)
-        {
-            int x = Math.Max(0, Math.Min(rect.X, screenWidth - rect.Width));
-            int y = Math.Max(0, Math.Min(rect.Y, screenHeight - rect.Height));
-            int width = Math.Min(rect.Width, screenWidth - x);
-            int height = Math.Min(rect.Height, screenHeight - y);
-            return new Rectangle(x, y, width, height);
+            FileManager.LogError("Reinitializing D3D11, timing out for 1000ms");
         }
         #endregion
         #endregion Screen Capture
@@ -1008,51 +887,17 @@ namespace Aimmy2.AILogic
         }
         private void DisposeD311()
         {
-            // Dispose of existing resources in the correct order
-            if (_outputDuplication != null)
-            {
-                _outputDuplication.Dispose();
-                _outputDuplication = null;
-            }
-
-            if (_deviceContext != null)
-            {
-                _deviceContext.ClearState();  // Clear the context state before disposing
-                _deviceContext.Flush();       // Ensure all pending operations are completed
-                _deviceContext.Dispose();
-                _deviceContext = null;
-            }
-
-            if (_device != null)
-            {
-                _device.Dispose();
-                _device = null;
-            }
-
-            if (_desktopImage != null)
-            {
-                _desktopImage.Dispose();
-                _desktopImage = null;
-            }
-
-            if (_screenCaptureBitmap != null)
-            {
-                _screenCaptureBitmap.Dispose();
-                _screenCaptureBitmap = null;
-            }
+            _desktopImage?.Dispose();
+            _context?.Dispose();
+            _device?.Dispose();
         }
         private void DisposeResources()
         {
-            if (Dictionary.dropdownState["Screen Capture Method"] == "DirectX")
-            {
-                DisposeD311();
-            }
-            //else
+            //if (Dictionary.dropdownState["Screen Capture Method"] == "DirectX")
             //{
-            //    //_graphics?.Dispose();
+            DisposeD311();
             //}
 
-            //_screenCaptureBitmap?.Dispose();
             _onnxModel?.Dispose();
             _modeloptions?.Dispose();
         }

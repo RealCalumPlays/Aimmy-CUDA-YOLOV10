@@ -33,16 +33,27 @@ namespace Visuality
             PropertyChanger.ReceiveColor = UpdateFOVColor;
             PropertyChanger.ReceiveFOVSize = UpdateFOVSize;
         }
-        //public void MoveToMonitor(Screen selectedMonitor)
-        //{
-        //    this.Left = selectedMonitor.Bounds.Left;
-        //    this.Top = selectedMonitor.Bounds.Top;
-        //    this.Width = selectedMonitor.Bounds.Width;
-        //    this.Height = selectedMonitor.Bounds.Height;
+        public void MoveToMonitor(Screen selectedMonitor)
+        {
+            // Set position and size before maximizing
+            this.Left = selectedMonitor.Bounds.Left;
+            this.Top = selectedMonitor.Bounds.Top;
+            this.Width = selectedMonitor.Bounds.Width;
+            this.Height = selectedMonitor.Bounds.Height;
 
-        //    this.WindowState = WindowState.Maximized;
-        //    this.Topmost = true;
-        //}
+            // Ensure the window is visible
+            if (this.WindowState == WindowState.Minimized)
+            {
+                this.WindowState = WindowState.Normal;
+            }
+
+            // Maximize the window after setting the position and size
+            this.WindowState = WindowState.Maximized;
+            this.Topmost = true;
+
+            // Bring the window to the front
+            this.Activate();
+        }
         private void UpdateFOVColor(Color NewColor) => Circle.Stroke = new SolidColorBrush(NewColor);
 
         private void UpdateFOVSize(double newdouble)
