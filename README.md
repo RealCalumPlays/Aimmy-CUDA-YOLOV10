@@ -36,6 +36,10 @@ This is a fork of [Aimmy](https://github.com/Babyhamsta/Aimmy/), if any problems
 [PixelDrain](https://pixeldrain.com/u/NAhaSbKL)
 
 
+https://github.com/user-attachments/assets/0df379d1-958e-4e69-b6e2-24c5d8a7b7fd
+
+
+
 ## Setup (manually)
 - Download and Install the x64 version of [.NET Runtime 8.0.X.X](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.2-windows-x64-installer)
 - Download and Install the x64 version of [.NET Runtime 7.0.X.X](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-7.0.20-windows-x64-installer)
