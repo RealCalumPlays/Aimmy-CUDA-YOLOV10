@@ -1,7 +1,4 @@
 Aimmy is a universal AI-Based Aim Alignment Mechanism developed by BabyHamsta, MarsQQ, and Taylor to make gaming more accessible for users who have difficulty aiming.
-
-Unlike most AI-Based Aim Alignment Mechanisms, Aimmy utilizes DirectML, ONNX, and YOLOV8 to detect players, offering both higher accuracy and faster performance compared to other Aim Aligners, especially on AMD GPUs, which would not perform well on Aim Alignment Mechanisms that utilize TensorRT.
-
 Aimmy also provides an easy to use user-interface, a wide set of features and customizability options which makes Aimmy a great option for anyone who wants to use and tailor an Aim Alignment Mechanism for a specific game without having to code.
 
 Aimmy is 100% free to use. This means no ads, no key system, and no paywalled features. Aimmy is not, and will never be for sale for the end user, and is considered a source-available product, **not open source** as we actively discourage other developers from making commercial forks of Aimmy.
@@ -14,6 +11,18 @@ If you want to share Aimmy with your friends use our [website!](https://aimmy.de
 
 # Disclaimer
 This is a fork of [Aimmy](https://github.com/Babyhamsta/Aimmy/), if any problems ask us on [discord](discord.gg/aimmy).
+## What is CUDA
+> **What's CUDA?**
+
+```Cuda is pretty much just the better version of "DirectML" and uses Nividia's GPU power to make it more smoother and faster```
+
+> **What's DirectML?**
+
+```Think of it as a mid lvl AI that relies on your GPU to work good```
+
+> **How does the AI work?**
+
+```Using the imported models (pictures), it will then scan the game as you play and look for players that match the models (pictures)```
 
 ## Setup (automatically)
 - Download and run LazyAimmySetupCuda ... thats it.
